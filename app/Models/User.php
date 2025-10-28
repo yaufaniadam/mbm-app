@@ -24,6 +24,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'telepon',
+        'alamat',
+        'nik',
         // Tambahkan 'sppg_id' jika Anda menggunakannya sebagai SPPG "utama" atau "asal" user.
         // Ini opsional, karena peran utama ditentukan oleh relasi.
         // 'sppg_id',
@@ -67,9 +70,9 @@ class User extends Authenticatable
      */
     public function unitTugas(): BelongsToMany
     {
-        return $this->belongsToMany(Sppg::class, 'sppg_user_role')
-            ->withPivot('role_id') // Ambil juga role_id dari pivot table
-            ->withTimestamps();
+        return $this->belongsToMany(Sppg::class, 'sppg_user_roles')
+            // ->withPivot('role_id') // Ambil juga role_id dari pivot table
+            ->limit(1);
     }
 
     public function lembagaDipimpin(): HasOne
