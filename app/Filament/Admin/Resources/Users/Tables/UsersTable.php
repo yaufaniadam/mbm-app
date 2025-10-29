@@ -15,6 +15,11 @@ class UsersTable
         return $table
             ->columns([
                 TextColumn::make('name')->label('Name')->sortable()->searchable(),
+                TextColumn::make('roles.name')
+                    ->label('Role')
+                    ->badge()
+                    // ->sortable()
+                    ->searchable(),
             ])
             ->filters([
                 //

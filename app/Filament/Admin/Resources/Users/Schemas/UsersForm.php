@@ -33,6 +33,7 @@ class UsersForm
                 Select::make('role')
                     ->label('Role')
                     ->relationship('roles', 'name')
+                    ->multiple()
                     ->preload()
                     ->searchable()
                     ->required(),

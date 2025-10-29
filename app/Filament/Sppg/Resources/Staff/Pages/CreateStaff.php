@@ -25,16 +25,24 @@ class CreateStaff extends CreateRecord
         $organizationId = $manager->unitTugas()->first()?->id;
 
         if ($organizationId) {
-            DB::table('sppg_user_roles')->upsert(
+            DB::table('sppg_user_roles')->insert(
                 [
-                    [
-                        'user_id' => $record->id,
-                        'sppg_id' => $organizationId,
-                    ],
+                    'user_id' => $record->id,
+                    'sppg_id' => $organizationId,
                 ],
-                ['user_id'], // unique key
-                ['sppg_id'] // columns to update if exists
             );
         }
+        // if ($organizationId) {
+        //     DB::table('sppg_user_roles')->upsert(
+        //         [
+        //             [
+        //                 'user_id' => $record->id,
+        //                 'sppg_id' => $organizationId,
+        //             ],
+        //         ],
+        //         ['user_id'], // unique key
+        //         ['sppg_id'] // columns to update if exists
+        //     );
+        // }
     }
 }
