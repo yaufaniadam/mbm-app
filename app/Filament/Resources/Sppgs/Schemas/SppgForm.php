@@ -71,7 +71,7 @@ class SppgForm
                     })
                     ->live()
                     ->searchable()
-                    ->disabled(fn (callable $get) => ! $get('province_code')),
+                    ->disabled(fn(callable $get) => ! $get('province_code')),
                 Select::make('district_code')
                     ->label('Kecamatan')
                     ->options(function (callable $get) {
@@ -92,7 +92,7 @@ class SppgForm
                     })
                     ->live()
                     ->searchable()
-                    ->disabled(fn (callable $get) => ! $get('city_code')),
+                    ->disabled(fn(callable $get) => ! $get('city_code')),
                 Select::make('village_code')
                     ->label('Kelurahan/Desa')
                     ->options(function (callable $get) {
@@ -113,7 +113,7 @@ class SppgForm
                     })
                     ->live()
                     ->searchable()
-                    ->disabled(fn (callable $get) => ! $get('district_code')),
+                    ->disabled(fn(callable $get) => ! $get('district_code')),
             ]);
 
         // return $schema
