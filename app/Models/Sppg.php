@@ -65,4 +65,9 @@ class Sppg extends Model
             ->withPivot('role_id')
             ->withTimestamps();
     }
+
+    public function schools()
+    {
+        return $this->hasMany(School::class);
+    }
 }

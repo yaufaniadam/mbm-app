@@ -4,16 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ProductionSchedule extends Model
+class School extends Model
 {
-    protected $table = 'jadwal_produksi';
+    protected $table = 'sekolah';
 
     protected $fillable = [
         'sppg_id',
-        'tanggal',
-        'menu_hari_ini',
-        'jumlah',
-        'status'
+        'nama_sekolah',
+        'alamat',
+        'province_code',
+        'city_code',
+        'district_code',
+        'village_code',
     ];
 
     public function sppg()

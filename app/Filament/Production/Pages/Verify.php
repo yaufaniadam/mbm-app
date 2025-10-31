@@ -5,7 +5,6 @@ namespace App\Filament\Production\Pages;
 use App\Models\ProductionSchedule;
 use App\Models\FoodVerification;
 use Filament\Forms\Components\Radio;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -20,6 +19,7 @@ class Verify extends Page implements HasForms
     use InteractsWithForms;
 
     protected string $view = 'filament.production.pages.verify';
+    protected static ?string $navigationLabel = 'Verifikasi Gizi';
     protected ?string $heading = '';
 
     public ?array $data = [];
