@@ -47,7 +47,9 @@ class Verify extends Page implements HasForms
         $user = Auth::user();
         $organizationId = $user->unitTugas()->first()->id;
 
-        $this->record = ProductionSchedule::where('sppg_id', $organizationId)->latest()->first();
+        $this->record = ProductionSchedule::where('sppg_id', $organizationId)
+            ->latest()
+            ->first();
 
         if (! $this->record) {
             Notification::make()

@@ -27,22 +27,22 @@
             @endif
         </div>
         <div>
-            <div class="flex justify-between">
-                <span>
-                    Daftar Menu :
-                </span>
-                <span>
-                    {{ $record->menu_hari_ini }}
-                </span>
-            </div>
+            <div class="grid grid-cols-7 gap-x-2 gap-y-1">
 
-            <div class="flex justify-between">
-                <span>
-                    Jumlah Porsi :
+                <span class="col-span-3">Daftar Menu :</span>
+                <span class="col-span-4 break-words"> {{ $record->menu_hari_ini }}
                 </span>
-                <span>
-                    {{ $record->jumlah }} Porsi
+
+                <span class="col-span-3">Jumlah Porsi Besar :</span>
+                <span class="col-span-4">
+                    {{ $record->getTotalPorsiBesarAttribute() }} Porsi
                 </span>
+
+                <span class="col-span-3">Jumlah Porsi Kecil :</span>
+                <span class="col-span-4">
+                    {{ $record->getTotalPorsiKecilAttribute() }} Porsi
+                </span>
+
             </div>
         </div>
         <div>
