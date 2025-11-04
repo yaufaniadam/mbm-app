@@ -1,0 +1,18 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Volunteer extends Model
+{
+    protected $table = 'relawan';
+
+
+    protected $fillable = [
+        'sppg_id',
+        'nama_relawan',
+        'posisi',
+        'kontak',
+    ];
+}
