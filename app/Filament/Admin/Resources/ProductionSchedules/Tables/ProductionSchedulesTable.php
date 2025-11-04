@@ -25,7 +25,8 @@ class ProductionSchedulesTable
                             ->translatedFormat('l, d F Y')
                     )
                     ->sortable(),
-                TextColumn::make('jumlah')->label('Jumlah')->sortable()->searchable(),
+                TextColumn::make('sppg.nama_sppg')->label('SPPG'),
+                // TextColumn::make('jumlah')->label('Jumlah')->sortable()->searchable(),
                 TextColumn::make('menu_hari_ini')->label('Menu')->sortable()->searchable(),
             ])
             ->filters([
