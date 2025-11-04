@@ -26,6 +26,8 @@ class ProductionScheduleResource extends Resource
 {
     protected static ?string $model = ProductionSchedule::class;
 
+    protected static ?string $navigationLabel = 'Jadwal Produksi';
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     public static function form(Schema $schema): Schema

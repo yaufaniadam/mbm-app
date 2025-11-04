@@ -20,6 +20,8 @@ class VolunteerResource extends Resource
 {
     protected static ?string $model = Volunteer::class;
 
+    protected static ?string $navigationLabel = 'Relawan';
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     public static function form(Schema $schema): Schema
