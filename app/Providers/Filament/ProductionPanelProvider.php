@@ -42,7 +42,7 @@ class ProductionPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Production/Widgets'), for: 'App\Filament\Production\Widgets')
             ->widgets([
                 AccountWidget::class,
-                FilamentInfoWidget::class,
+                // FilamentInfoWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
