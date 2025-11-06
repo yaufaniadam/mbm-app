@@ -158,6 +158,21 @@ class ProductionScheduleResource extends Resource
                             default => 'gray',
                         })
                         ->columnSpanFull(),
+                    TextEntry::make('courier' . $school->id) // 's' ditambahkan untuk key unik
+                        ->label('Petugas Pengantaran')
+                        ->state(function (ProductionSchedule $record) use ($school) {
+                            // Akses koleksi yang sudah dimuat
+                            $distribution = $record->distributions
+                                ->where('sekolah_id', $school->id)
+                                ->first();
+
+                            // dd($distribution->courier);
+
+                            // Gunakan nullsafe operator (?->) yang kita bahas sebelumnya
+                            return $distribution?->courier?->name;
+                        })
+                        ->badge()
+                        ->columnSpanFull(),
                 ])
                 ->columns(2);
         }
