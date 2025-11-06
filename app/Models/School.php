@@ -22,4 +22,9 @@ class School extends Model
     {
         return $this->belongsTo(Sppg::class);
     }
+
+    public function distributions()
+    {
+        return $this->hasMany(Distribution::class, 'sekolah_id', 'id');
+    }
 }
