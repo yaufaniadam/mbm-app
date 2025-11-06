@@ -1,3 +1,8 @@
+@php
+    // 1. Tambahkan ini di bagian atas file blade Anda
+    use App\Filament\Production\Pages\Delivery;
+@endphp
+
 <x-filament-panels::page>
     {{-- Page content --}}
 
@@ -52,21 +57,51 @@
                 </p>
             </div>
             <ul>
-                @foreach ($record->sppg->schools as $item)
+                @foreach ($record->distributions as $item)
                     @if ($loop->first)
                         <li class="bg-slate-800 rounded-t-lg p-4 mb-1">
-                            <p class="mb-1">{{ $item->nama_sekolah }}</p>
-                            <p>{{ $item->alamat }}</p>
+                            <div class="flex justify-between">
+                                <div>
+                                    <p class="mb-1">{{ $item->school->nama_sekolah }}</p>
+                                    <p>{{ $item->school->alamat }}</p>
+                                </div>
+                                <div>
+                                    <x-filament::button tag="a"
+                                        href="{{ Delivery::getUrl(['distribution' => $item->id]) }}" size="sm">
+                                        Antarkan
+                                    </x-filament::button>
+                                </div>
+                            </div>
                         </li>
                     @elseif ($loop->last)
                         <li class="bg-slate-800 rounded-b-lg p-4">
-                            <p class="mb-1">{{ $item->nama_sekolah }}</p>
-                            <p>{{ $item->alamat }}</p>
+                            <div class="flex justify-between">
+                                <div>
+                                    <p class="mb-1">{{ $item->school->nama_sekolah }}</p>
+                                    <p>{{ $item->school->alamat }}</p>
+                                </div>
+                                <div>
+                                    <x-filament::button tag="a"
+                                        href="{{ Delivery::getUrl(['distribution' => $item->id]) }}" size="sm">
+                                        Antarkan
+                                    </x-filament::button>
+                                </div>
+                            </div>
                         </li>
                     @else
                         <li class="bg-slate-800 p-4 mb-1">
-                            <p class="mb-1">{{ $item->nama_sekolah }}</p>
-                            <p>{{ $item->alamat }}</p>
+                            <div class="flex justify-between">
+                                <div>
+                                    <p class="mb-1">{{ $item->school->nama_sekolah }}</p>
+                                    <p>{{ $item->school->alamat }}</p>
+                                </div>
+                                <div>
+                                    <x-filament::button tag="a"
+                                        href="{{ Delivery::getUrl(['distribution' => $item->id]) }}" size="sm">
+                                        Antarkan
+                                    </x-filament::button>
+                                </div>
+                            </div>
                         </li>
                     @endif
                 @endforeach
@@ -86,8 +121,4 @@
             Belum ada makanan yang siap didistribusikan.
         </x-filament::badge>
     @endif
-
-
-
-
 </x-filament-panels::page>
