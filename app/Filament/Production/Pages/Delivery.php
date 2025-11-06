@@ -61,7 +61,7 @@ class Delivery extends Page implements HasForms
             return;
         }
 
-        if ($distribution->user_id !== null && $distribution->user_id !== $user->id) {
+        if ($distribution->user_id != null && $distribution->user_id != $user->id) {
             Notification::make()
                 ->title('Makanan sedang dikirim oleh petugas lain.')
                 ->success()
