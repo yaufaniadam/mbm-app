@@ -70,4 +70,9 @@ class Sppg extends Model
     {
         return $this->hasMany(School::class);
     }
+
+    public function productionSchedules()
+    {
+        return $this->hasMany(ProductionSchedule::class);
+    }
 }
