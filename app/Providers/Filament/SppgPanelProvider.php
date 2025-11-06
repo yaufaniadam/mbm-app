@@ -60,7 +60,6 @@ class SppgPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
-            ->sidebarCollapsibleOnDesktop()
             ->spa(hasPrefetching: true);
     }
 }
