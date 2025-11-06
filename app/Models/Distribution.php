@@ -9,6 +9,7 @@ class Distribution extends Model
     protected $table = 'distribusi';
 
     protected $fillable = [
+        'user_id',
         'jadwal_produksi_id',
         'sekolah_id',
         'jumlah_porsi_besar',
@@ -25,5 +26,10 @@ class Distribution extends Model
     public function school()
     {
         return $this->belongsTo(School::class, 'sekolah_id', 'id');
+    }
+
+    public function courier()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 }
