@@ -52,4 +52,29 @@ class ProductionSchedule extends Model
         // and then sum the 'jumlah_porsi_kecil' values from the collection.
         return $this->distributions->sum('jumlah_porsi_kecil');
     }
+
+    /**
+     * NEW ACCESSOR
+     * Check if all related distributions have the status 'Terkirim'.
+     *
+     * @return bool
+     */
+    public function getIsFullyDeliveredAttribute()
+    {
+        // Get the collection of distributions.
+        // This follows the same lazy-loading pattern as your other accessors.
+        $distributions = $this->distributions;
+
+        // 1. If there are no distributions at all, we can't consider it "fully delivered".
+        if ($distributions->isEmpty()) {
+            return false;
+        }
+
+        // 2. Use the 'every' collection method.
+        // This will return 'true' ONLY if every single item in the collection
+        // passes the truth test. It stops and returns 'false' on the first failure.
+        return $distributions->every(function ($distribution, $key) {
+            return $distribution->status_pengantaran === 'Terkirim';
+        });
+    }
 }
