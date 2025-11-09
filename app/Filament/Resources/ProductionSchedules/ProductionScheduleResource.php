@@ -102,7 +102,8 @@ class ProductionScheduleResource extends Resource
         $staticComponents = $infolistSchema->getComponents();
 
         // 3. Get user and schools
-        $user = Auth::user();
+        $userId = Auth::user()->id;
+        $user = User::find($userId);
         if (!$user) {
             return $infolistSchema->schema($staticComponents);
         }
