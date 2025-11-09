@@ -59,6 +59,7 @@ class ProductionPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->spa(hasPrefetching: true);
     }
 }
