@@ -5,22 +5,55 @@ namespace App\Filament\Resources\ProductionSchedules\Pages;
 use App\Filament\Resources\ProductionSchedules\ProductionScheduleResource;
 use App\Models\Distribution;
 use App\Models\User;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 
 class CreateProductionSchedule extends CreateRecord
 {
     protected static string $resource = ProductionScheduleResource::class;
 
+    public function mount(): void
+    {
+        $user = Auth::user();
+
+        $sppgId = User::find($user->id)->unitTugas()->first();
+
+        if (!$sppgId) {
+            Notification::make()
+                ->title('Anda tidak memiliki akses ke halaman ini. Hubungi admin.')
+                ->danger()
+                ->send();
+
+            $this->redirect($this->getResource()::getUrl('index'));
+        }
+
+        parent::mount();
+    }
+
+
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $user = Auth::user();
 
-        $sppgId = User::find($user->id)->unitTugas()->first()->id;
+        $sppg = User::find($user->id)->unitTugas()->first();
 
-        $data['sppg_id'] = $sppgId;
+        if (!$sppg) {
+            Notification::make()
+                ->title('Anda belum ditugaskan ke sppg. Hubungi admin.')
+                ->danger()
+                ->send();
+
+            throw ValidationException::withMessages([
+                'sppg' => 'Anda belum ditugaskan ke sppg. Hubungi admin.',
+            ]);
+        }
+
+        $data['sppg_id'] = $sppg->id;
         return $data;
     }
+
 
     protected function afterCreate(): void
     {

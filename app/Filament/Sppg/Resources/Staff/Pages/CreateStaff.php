@@ -3,16 +3,52 @@
 namespace App\Filament\Sppg\Resources\Staff\Pages;
 
 use App\Filament\Sppg\Resources\Staff\StaffResource;
+use App\Models\User;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class CreateStaff extends CreateRecord
 {
     protected static string $resource = StaffResource::class;
 
+    public function mount(): void
+    {
+        $user = Auth::user();
+
+        $sppgId = User::find($user->id)->unitTugas()->first();
+
+        if (!$sppgId) {
+            Notification::make()
+                ->title('Anda tidak memiliki akses ke halaman ini. Hubungi admin.')
+                ->danger()
+                ->send();
+
+            $this->redirect($this->getResource()::getUrl('index'));
+        }
+
+        parent::mount();
+    }
+
     protected function mutateFormDataBeforeCreate(array $data): array
     {
+        $user = Auth::user();
+
+        $sppg = User::find($user->id)->unitTugas()->first();
+
+        if (!$sppg) {
+            Notification::make()
+                ->title('Anda belum ditugaskan ke sppg. Hubungi admin.')
+                ->danger()
+                ->send();
+
+            throw ValidationException::withMessages([
+                'sppg' => 'Anda belum ditugaskan ke sppg. Hubungi admin.',
+            ]);
+        }
+
         $data['password'] = 'p4$$w0rd'; // Set default password
         return $data;
     }
@@ -20,7 +56,8 @@ class CreateStaff extends CreateRecord
     protected function afterCreate(): void
     {
         $record = $this->record;
-        $manager = Auth::user();
+        $user = Auth::user();
+        $manager = User::find($user->id);
 
         $organizationId = $manager->unitTugas()->first()?->id;
 
