@@ -9,12 +9,15 @@ use App\Filament\Sppg\Resources\Volunteers\Pages\ViewVolunteer;
 use App\Filament\Sppg\Resources\Volunteers\Schemas\VolunteerForm;
 use App\Filament\Sppg\Resources\Volunteers\Schemas\VolunteerInfolist;
 use App\Filament\Sppg\Resources\Volunteers\Tables\VolunteersTable;
+use App\Models\User;
 use App\Models\Volunteer;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 class VolunteerResource extends Resource
 {
@@ -23,6 +26,15 @@ class VolunteerResource extends Resource
     protected static ?string $navigationLabel = 'Relawan';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    public static function getEloquentQuery(): Builder
+    {
+        $user = User::find(Auth::user()->id);
+
+        $sppgId = $user->sppgDiKepalai?->id;
+
+        return parent::getEloquentQuery()->where('sppg_id', $sppgId);
+    }
 
     public static function form(Schema $schema): Schema
     {

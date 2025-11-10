@@ -19,7 +19,7 @@ class CreateSchool extends CreateRecord
 
         $user = Auth::user();
 
-        $sppgId = User::find($user->id)->unitTugas()->first();
+        $sppgId = User::find($user->id)->sppgDikepalai;
 
         if (!$sppgId) {
             Notification::make()
@@ -37,7 +37,7 @@ class CreateSchool extends CreateRecord
     {
         $user = Auth::user();
 
-        $sppg = User::find($user->id)->unitTugas()->first();
+        $sppg = User::find($user->id)->sppgDikepalai;
 
         if (!$sppg) {
             Notification::make()

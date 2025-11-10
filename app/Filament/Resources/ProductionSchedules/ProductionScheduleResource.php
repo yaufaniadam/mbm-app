@@ -20,6 +20,7 @@ use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
@@ -42,9 +43,9 @@ class ProductionScheduleResource extends Resource
         /** @var User $user */
         $user = Auth::user();
 
-        // 3. Get the user's schools (or an empty collection)
-        $unitTugas = $user->unitTugas()->first();
-        $schools = $unitTugas ? $unitTugas->schools : collect(); // Assuming 'schools' is the relationship name
+        $sppg = User::find($user->id)->sppgDikepalai;
+
+        $schools = $sppg ? $sppg->schools : collect(); // Assuming 'schools' is the relationship name
 
         // 4. If the user has schools, create an inner Fieldset for each one
         if ($schools->isNotEmpty()) {
@@ -102,18 +103,19 @@ class ProductionScheduleResource extends Resource
         $staticComponents = $infolistSchema->getComponents();
 
         // 3. Get user and schools
-        $userId = Auth::user()->id;
-        $user = User::find($userId);
+        $user = User::find(Auth::user()->id);
+
+        $sppg = $user->sppgDikepalai;
+
         if (!$user) {
             return $infolistSchema->schema($staticComponents);
         }
 
-        $unitTugas = $user->unitTugas()->first();
-        if (!$unitTugas) {
+        if (!$sppg) {
             return $infolistSchema->schema($staticComponents);
         }
 
-        $schools = $unitTugas->schools()->get();
+        $schools = $sppg->schools()->get();
         if ($schools->isEmpty()) {
             return $infolistSchema->schema($staticComponents);
         }
@@ -216,5 +218,14 @@ class ProductionScheduleResource extends Resource
             'view' => ViewProductionSchedule::route('/{record}'),
             'edit' => EditProductionSchedule::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $user = Auth::user();
+
+        $sppg = User::find($user->id)->sppgDikepalai;
+
+        return parent::getEloquentQuery()->where('sppg_id', $sppg->id);
     }
 }

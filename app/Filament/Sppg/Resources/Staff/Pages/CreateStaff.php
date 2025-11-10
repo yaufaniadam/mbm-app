@@ -16,9 +16,9 @@ class CreateStaff extends CreateRecord
 
     public function mount(): void
     {
-        $user = Auth::user();
+        $user = User::find(Auth::user()->id);
 
-        $sppgId = User::find($user->id)->unitTugas()->first();
+        $sppgId = $user->sppgDiKepalai?->id;
 
         if (!$sppgId) {
             Notification::make()
@@ -34,9 +34,9 @@ class CreateStaff extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $user = Auth::user();
+        $user = User::find(Auth::user()->id);
 
-        $sppg = User::find($user->id)->unitTugas()->first();
+        $sppg = $user->sppgDiKepalai;
 
         if (!$sppg) {
             Notification::make()
@@ -56,16 +56,15 @@ class CreateStaff extends CreateRecord
     protected function afterCreate(): void
     {
         $record = $this->record;
-        $user = Auth::user();
-        $manager = User::find($user->id);
+        $user = User::find(Auth::user()->id);
 
-        $organizationId = $manager->unitTugas()->first()?->id;
+        $sppgId = $user->sppgDiKepalai?->id;
 
-        if ($organizationId) {
+        if ($sppgId) {
             DB::table('sppg_user_roles')->insert(
                 [
                     'user_id' => $record->id,
-                    'sppg_id' => $organizationId,
+                    'sppg_id' => $sppgId,
                 ],
             );
         }

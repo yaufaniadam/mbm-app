@@ -10,11 +10,14 @@ use App\Filament\Sppg\Resources\Schools\Schemas\SchoolForm;
 use App\Filament\Sppg\Resources\Schools\Schemas\SchoolInfolist;
 use App\Filament\Sppg\Resources\Schools\Tables\SchoolsTable;
 use App\Models\School;
+use App\Models\User;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 class SchoolResource extends Resource
 {
@@ -54,5 +57,14 @@ class SchoolResource extends Resource
             'view' => ViewSchool::route('/{record}'),
             'edit' => EditSchool::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $user = User::find(Auth::user()->id);
+
+        $sppgId = $user->sppgDiKepalai?->id;
+
+        return parent::getEloquentQuery()->where('sppg_id', $sppgId);
     }
 }

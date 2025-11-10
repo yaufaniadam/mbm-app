@@ -58,16 +58,13 @@ class StaffResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        $user = User::find(Auth::id());
+        $user = User::find(Auth::user()->id);
 
-        // dd($user->unitTugas()->first()->id);
-
-        $organizationId = $user->unitTugas()->first()?->id;
-        // ?? $user->lembagaDipimpin()?->id;
+        $sppgId = $user->sppgDiKepalai?->id;
 
         return parent::getEloquentQuery()
-            ->whereHas('unitTugas', function (Builder $query) use ($organizationId) {
-                $query->where('sppg_id', $organizationId);
+            ->whereHas('unitTugas', function (Builder $query) use ($sppgId) {
+                $query->where('sppg_id', $sppgId);
             });
     }
 }
