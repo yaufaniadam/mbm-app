@@ -27,15 +27,6 @@ class VolunteerResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-    public static function getEloquentQuery(): Builder
-    {
-        $user = User::find(Auth::user()->id);
-
-        $sppgId = $user->sppgDiKepalai?->id;
-
-        return parent::getEloquentQuery()->where('sppg_id', $sppgId);
-    }
-
     public static function form(Schema $schema): Schema
     {
         return VolunteerForm::configure($schema);
@@ -66,5 +57,17 @@ class VolunteerResource extends Resource
             'view' => ViewVolunteer::route('/{record}'),
             'edit' => EditVolunteer::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $user = Auth::user();
+        if ($user->hasRole('Kepala SPPG')) {
+            $sppg = User::find($user->id)->sppgDikepalai;
+
+            return parent::getEloquentQuery()->where('sppg_id', $sppg->id);
+        }
+
+        return parent::getEloquentQuery();
     }
 }

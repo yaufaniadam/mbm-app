@@ -57,14 +57,14 @@ class ProductionScheduleResource extends Resource
                     ->schema([
                         // *** ADDED THIS HIDDEN FIELD ***
                         // This field holds the school ID as part of the data
-                        Hidden::make('porsi_per_sekolah.' . $school->id . '.sekolah_id')
+                        Hidden::make('porsi_per_sekolah.'.$school->id.'.sekolah_id')
                             ->default($school->id),
                         // The path now uses dot notation for the nested JSON structure
-                        TextInput::make('porsi_per_sekolah.' . $school->id . '.jumlah_porsi_besar')
+                        TextInput::make('porsi_per_sekolah.'.$school->id.'.jumlah_porsi_besar')
                             ->label('Jumlah Porsi Besar')
                             ->numeric()
                             ->required(),
-                        TextInput::make('porsi_per_sekolah.' . $school->id . '.jumlah_porsi_kecil')
+                        TextInput::make('porsi_per_sekolah.'.$school->id.'.jumlah_porsi_kecil')
                             ->label('Jumlah Porsi Kecil')
                             ->numeric()
                             ->required(),
@@ -92,7 +92,6 @@ class ProductionScheduleResource extends Resource
         );
     }
 
-
     public static function infolist(Schema $schema): Schema
     {
         // 1. Call your static configure method
@@ -107,11 +106,11 @@ class ProductionScheduleResource extends Resource
 
         $sppg = $user->sppgDikepalai;
 
-        if (!$user) {
+        if (! $user) {
             return $infolistSchema->schema($staticComponents);
         }
 
-        if (!$sppg) {
+        if (! $sppg) {
             return $infolistSchema->schema($staticComponents);
         }
 
@@ -125,7 +124,7 @@ class ProductionScheduleResource extends Resource
         foreach ($schools as $school) {
             $dynamicComponents[] = FieldSet::make($school->nama_sekolah)
                 ->schema([
-                    TextEntry::make('jumlah_porsi_besar_for_' . $school->id)
+                    TextEntry::make('jumlah_porsi_besar_for_'.$school->id)
                         ->label('Jumlah Porsi Besar')
                         // Use a custom state getter to find the right distribution
                         ->state(function (ProductionSchedule $record) use ($school) {
@@ -135,7 +134,7 @@ class ProductionScheduleResource extends Resource
 
                             return $distribution ? $distribution->jumlah_porsi_besar : '0';
                         }),
-                    TextEntry::make('jumlah_porsi_kecil_for_' . $school->id)
+                    TextEntry::make('jumlah_porsi_kecil_for_'.$school->id)
                         ->label('Jumlah Porsi Kecil')
                         ->state(function (ProductionSchedule $record) use ($school) {
                             $distribution = $record->distributions()
@@ -144,7 +143,7 @@ class ProductionScheduleResource extends Resource
 
                             return $distribution ? $distribution->jumlah_porsi_kecil : '0';
                         }),
-                    TextEntry::make('status_pengantaran_for_' . $school->id)
+                    TextEntry::make('status_pengantaran_for_'.$school->id)
                         ->label('Status Pengantaran')
                         ->state(function (ProductionSchedule $record) use ($school) {
                             $distribution = $record->distributions()
@@ -154,14 +153,14 @@ class ProductionScheduleResource extends Resource
                             return $distribution ? $distribution->status_pengantaran : null;
                         })
                         ->badge()
-                        ->color(fn(?string $state): string => match ($state) {
+                        ->color(fn (?string $state): string => match ($state) {
                             'Menunggu' => 'warning',
                             'Sedang Dikirim' => 'info',
                             'Terkirim' => 'success',
                             default => 'gray',
                         })
                         ->columnSpanFull(),
-                    TextEntry::make('courier' . $school->id) // 's' ditambahkan untuk key unik
+                    TextEntry::make('courier'.$school->id) // 's' ditambahkan untuk key unik
                         ->label('Petugas Pengantaran')
                         ->state(function (ProductionSchedule $record) use ($school) {
                             // Akses koleksi yang sudah dimuat
@@ -194,9 +193,6 @@ class ProductionScheduleResource extends Resource
 
     /**
      * Conditionally prevent editing based on record status.
-     *
-     * @param Model $record
-     * @return bool
      */
     public static function canEdit(Model $record): bool
     {
@@ -223,9 +219,12 @@ class ProductionScheduleResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         $user = Auth::user();
+        if ($user->hasRole('Kepala SPPG')) {
+            $sppg = User::find($user->id)->sppgDikepalai;
 
-        $sppg = User::find($user->id)->sppgDikepalai;
+            return parent::getEloquentQuery()->where('sppg_id', $sppg->id);
+        }
 
-        return parent::getEloquentQuery()->where('sppg_id', $sppg->id);
+        return parent::getEloquentQuery();
     }
 }

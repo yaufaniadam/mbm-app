@@ -61,10 +61,13 @@ class SchoolResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        $user = User::find(Auth::user()->id);
+        $user = Auth::user();
+        if ($user->hasRole('Kepala SPPG')) {
+            $sppg = User::find($user->id)->sppgDikepalai;
 
-        $sppgId = $user->sppgDiKepalai?->id;
+            return parent::getEloquentQuery()->where('sppg_id', $sppg->id);
+        }
 
-        return parent::getEloquentQuery()->where('sppg_id', $sppgId);
+        return parent::getEloquentQuery();
     }
 }

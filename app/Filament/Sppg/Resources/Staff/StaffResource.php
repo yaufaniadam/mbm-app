@@ -15,7 +15,6 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class StaffResource extends Resource
 {
@@ -58,13 +57,16 @@ class StaffResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        $user = User::find(Auth::user()->id);
+        $user = Auth::user();
+        if ($user->hasRole('Kepala SPPG')) {
+            $sppg = User::find($user->id)->sppgDikepalai;
 
-        $sppgId = $user->sppgDiKepalai?->id;
+            return parent::getEloquentQuery()
+                ->whereHas('unitTugas', function (Builder $query) use ($sppg) {
+                    $query->where('sppg_id', $sppg->id);
+                });
+        }
 
-        return parent::getEloquentQuery()
-            ->whereHas('unitTugas', function (Builder $query) use ($sppgId) {
-                $query->where('sppg_id', $sppgId);
-            });
+        return parent::getEloquentQuery();
     }
 }
