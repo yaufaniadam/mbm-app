@@ -75,4 +75,9 @@ class Sppg extends Model
     {
         return $this->hasMany(ProductionSchedule::class);
     }
+
+    public function staffs()
+    {
+        return $this->hasMany(SppgUserRole::class);
+    }
 }

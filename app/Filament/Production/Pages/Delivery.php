@@ -36,7 +36,6 @@ class Delivery extends Page implements HasForms
             ->name('delivery');
     }
 
-
     public function mount(Distribution $distribution): void
     {
         $this->record = $distribution;
@@ -82,7 +81,7 @@ class Delivery extends Page implements HasForms
         if ($distribution->status_pengantaran === 'Menunggu') {
             $distribution->update([
                 'status_pengantaran' => 'Sedang Dikirim',
-                'user_id' => $user->id
+                'user_id' => $user->id,
             ]);
 
             if ($production->status === 'Terverifikasi') {
