@@ -90,6 +90,7 @@ class SppgProfile extends Page implements HasForms
 
                         return $provinces->pluck('name', 'code');
                     })
+                    ->string()
                     ->live()
                     ->searchable()
                     ->afterStateUpdated(function (callable $set) {
@@ -115,6 +116,7 @@ class SppgProfile extends Page implements HasForms
 
                         return $cities->pluck('name', 'code');
                     })
+                    ->string()
                     ->live()
                     ->searchable()
                     ->disabled(fn (callable $get) => ! $get('province_code')),
@@ -136,6 +138,7 @@ class SppgProfile extends Page implements HasForms
 
                         return $districts->pluck('name', 'code');
                     })
+                    ->string()
                     ->live()
                     ->searchable()
                     ->disabled(fn (callable $get) => ! $get('city_code')),
@@ -157,6 +160,7 @@ class SppgProfile extends Page implements HasForms
 
                         return $villages->pluck('name', 'code');
                     })
+                    ->string()
                     ->live()
                     ->searchable()
                     ->disabled(fn (callable $get) => ! $get('district_code')),
