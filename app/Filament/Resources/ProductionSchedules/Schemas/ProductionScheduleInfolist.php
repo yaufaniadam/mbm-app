@@ -69,7 +69,7 @@ class ProductionScheduleInfolist
                             return redirect(request()->header('Referer'));
                         })
                         ->authorize(function (ProductionSchedule $record): bool {
-                            $statusCondition = $record->status !== 'Terverifikasi';
+                            $statusCondition = $record->status == 'Menunggu ACC Kepala SPPG';
 
                             if (! $statusCondition) {
                                 return false; // Hide if status is Terverifikasi
