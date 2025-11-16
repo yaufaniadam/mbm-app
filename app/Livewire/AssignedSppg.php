@@ -27,6 +27,6 @@ class AssignedSppg extends Widget
     {
         $user = Auth::user();
 
-        return $user->hasRole('Kepala SPPG') || $user->hasRole('PJ Pelaksana');
+        return $user->hasRole('Staf Gizi') || $user->hasRole('Staf Pengantaran') || $user->hasRole('Staf Akuntan');
     }
 }
