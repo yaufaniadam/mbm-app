@@ -9,6 +9,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Panel;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 
 class Delivery extends Page implements HasForms
@@ -36,8 +37,16 @@ class Delivery extends Page implements HasForms
             ->name('delivery');
     }
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        // This checks the permission you just generated
+        return auth()->user()->can('View:Delivery');
+    }
+
     public function mount(Distribution $distribution): void
     {
+        Gate::authorize('View:Delivery');
+
         $this->record = $distribution;
 
         $this->isEditable = $distribution->status_pengantaran === 'Menunggu';

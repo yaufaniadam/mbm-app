@@ -14,6 +14,7 @@ use Filament\Pages\Page;
 use Filament\Schemas\Components\Fieldset;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class SppgProfile extends Page implements HasForms
 {
@@ -36,6 +37,12 @@ class SppgProfile extends Page implements HasForms
         return 'heroicon-o-cog-8-tooth';
     }
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        // This checks the permission you just generated
+        return auth()->user()->can('View:SppgProfile');
+    }
+
     public function getFormStatePath(): string
     {
         return 'data';
@@ -43,6 +50,8 @@ class SppgProfile extends Page implements HasForms
 
     public function mount(): void
     {
+        Gate::authorize('View:SppgProfile');
+
         $user = Auth::user();
 
         if ($user->hasRole('Kepala SPPG')) {

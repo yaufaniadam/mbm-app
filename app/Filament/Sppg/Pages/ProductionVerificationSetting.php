@@ -14,6 +14,7 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class ProductionVerificationSetting extends Page implements HasActions, HasForms
 {
@@ -36,6 +37,12 @@ class ProductionVerificationSetting extends Page implements HasActions, HasForms
         return 'heroicon-o-clipboard-document-list';
     }
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        // This checks the permission you just generated
+        return auth()->user()->can('View:ProductionVerificationSetting');
+    }
+
     public function getFormStatePath(): string
     {
         return 'data';
@@ -43,6 +50,8 @@ class ProductionVerificationSetting extends Page implements HasActions, HasForms
 
     public function mount(): void
     {
+        Gate::authorize('View:ProductionVerificationSetting');
+
         $user = Auth::user();
 
         if ($user->hasRole('Kepala SPPG')) {

@@ -16,6 +16,7 @@ use Filament\Pages\Page;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class Verify extends Page implements HasForms
 {
@@ -50,8 +51,16 @@ class Verify extends Page implements HasForms
         return 'heroicon-o-check-badge';
     }
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        // This checks the permission you just generated
+        return auth()->user()->can('View:Verify');
+    }
+
     public function mount(): void
     {
+        Gate::authorize('View:Verify');
+
         $user = Auth::user();
         $organizationId = $user->unitTugas()->first()->id;
 

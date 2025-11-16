@@ -9,6 +9,7 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class Distribution extends Page implements HasForms
 {
@@ -38,8 +39,16 @@ class Distribution extends Page implements HasForms
         return 'heroicon-o-truck';
     }
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        // This checks the permission you just generated
+        return auth()->user()->can('View:Distribution');
+    }
+
     public function mount(): void
     {
+        Gate::authorize('View:Distribution');
+
         $user = Auth::user();
         $organizationId = $user->unitTugas()->first()->id;
 
