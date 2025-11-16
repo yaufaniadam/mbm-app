@@ -5,15 +5,15 @@ namespace App\Livewire;
 use App\Models\ProductionSchedule;
 use App\Models\User;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Concerns\HasFilters;
 use Filament\Tables\Table;
+use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Widgets\TableWidget;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 
 class ProductionScheduleList extends TableWidget
 {
-    use HasFilters; // <-- 2. ADD THIS TRAIT
+    use InteractsWithPageFilters; // <-- 2. ADD THIS TRAIT
 
     protected int|string|array $columnSpan = 'full';
 
