@@ -19,6 +19,8 @@ class ProductionScheduleList extends TableWidget
 
     protected static ?string $heading = 'Jadwal Produksi'; // Optional: Add a heading
 
+    protected static bool $isLazy = false;
+
     public function table(Table $table): Table
     {
         return $table
