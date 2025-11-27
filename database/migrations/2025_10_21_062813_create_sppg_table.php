@@ -14,13 +14,14 @@ return new class extends Migration
         Schema::create('sppg', function (Blueprint $table) {
             $table->id();
             $table->foreignId('kepala_sppg_id')->nullable()->unique();
-            $table->string('nama_sppg');  
-            $table->string('kode_sppg'); 
-            $table->string('nama_bank')->nullable(); 
-            $table->string('nomor_va')->nullable(); 
+            $table->string('nama_sppg');
+            $table->string('kode_sppg');
+            $table->string('nama_bank')->nullable();
+            $table->string('nomor_va')->nullable();
             $table->text('alamat');
+            $table->boolean('is_active')->default(true);
+            $table->dateTime('tanggal_mulai_sewa')->nullable();
 
-            
             // Gunakan char/string sesuai tipe kolom 'code' di laravolt
             $table->char('province_code', 2)->nullable();
             $table->char('city_code', 4)->nullable();

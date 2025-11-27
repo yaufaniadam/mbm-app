@@ -38,6 +38,8 @@ class Sppg extends Model
         'nama_bank',
         'nomor_va',
         'alamat',
+        'is_active',
+        'tanggal_mulai_sewa',
         'kepala_sppg_id',
         'lembaga_pengusul_id',
         'province_code',
@@ -118,5 +120,10 @@ class Sppg extends Model
             'id',                  // Local key on 'sppg' table
             'id'                   // Local key on 'jadwal_produksi' table
         );
+    }
+
+    public function latestBill()
+    {
+        return $this->hasOne(Bill::class)->latestOfMany('period_end');
     }
 }
