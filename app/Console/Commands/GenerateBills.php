@@ -55,7 +55,7 @@ class GenerateBills extends Command
 
                     // Safety: Cegah error divide by zero atau infinite loop jika interval tidak valid
                     if ($interval < 1) {
-                        $interval = 7;
+                        $interval = 10;
                     }
 
                     $daysPending = $startDate->diffInDays($today);
@@ -76,7 +76,7 @@ class GenerateBills extends Command
                             'type' => 'sewa_lokal',
                             'billed_to_type' => 'sppg',
                             'billed_to_id' => $sppg->id,
-                            'invoice_number' => 'INV-LOC-'.$sppg->kode_sppg.'-'.$uniqueDateSuffix,
+                            'invoice_number' => 'INV-LOC-' . $sppg->kode_sppg . '-' . $uniqueDateSuffix,
                             'period_start' => $startDate->toDateString(),
                             'period_end' => $endDate->toDateString(),
                             'amount' => 6000000 * $interval,
@@ -91,7 +91,7 @@ class GenerateBills extends Command
                             'type' => 'setoran_kornas',
                             'billed_to_type' => 'pengusul',
                             'billed_to_id' => $sppg->lembagaPengusul->id,
-                            'invoice_number' => 'INV-CEN-'.$sppg->kode_sppg.'-'.$uniqueDateSuffix,
+                            'invoice_number' => 'INV-CEN-' . $sppg->kode_sppg . '-' . $uniqueDateSuffix,
                             'period_start' => $startDate->toDateString(),
                             'period_end' => $endDate->toDateString(),
                             'amount' => 600000 * $interval,
