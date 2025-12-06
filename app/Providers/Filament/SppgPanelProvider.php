@@ -5,10 +5,8 @@ namespace App\Providers\Filament;
 use App\Filament\Pages\ManageFinance;
 use App\Filament\Resources\ProductionSchedules\ProductionScheduleResource;
 use App\Filament\Sppg\Pages\Dashboard;
-use App\Filament\Sppg\Pages\ProductionVerificationSetting;
 use App\Filament\Sppg\Pages\SppgProfile;
 use App\Livewire\AssignedSppg;
-use App\Livewire\SppgOverview;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -16,8 +14,6 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Filament\Widgets\AccountWidget;
-use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -46,8 +42,7 @@ class SppgPanelProvider extends PanelProvider
             ->pages([
                 Dashboard::class,
                 SppgProfile::class,
-                ProductionVerificationSetting::class,
-                ManageFinance::class,
+                // ManageFinance::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
