@@ -32,6 +32,28 @@ class ProductionScheduleResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+    public static function getNavigationBadge(): ?string
+    {
+        $user = Auth::user();
+
+        // Kepala SPPG → Only show schedules for their SPPG
+        if ($user->hasRole('Kepala SPPG')) {
+            $sppg = $user->sppgDikepalai;
+
+            return ProductionSchedule::where([['sppg_id', $sppg->id], ['status', '==', 'Menunggu ACC Kepala SPPG']])->count();
+        }
+
+        // PJ Pelaksana → Only schedules for their unit tugas
+        if ($user->hasRole('PJ Pelaksana')) {
+            $unitTugas = $user->unitTugas->first();
+
+            return ProductionSchedule::where([['sppg_id', $unitTugas->id], ['status', '==', 'Menunggu ACC Kepala SPPG']])->count();
+        }
+
+        // Default → all schedules
+        return ProductionSchedule::count();
+    }
+
     public static function form(Schema $schema): Schema
     {
         // 1. Get the Schema object configured with static components
@@ -60,21 +82,26 @@ class ProductionScheduleResource extends Resource
 
             // We use map() to transform each school into its own Fieldset component
             $schoolFieldsets = $schools->map(function ($school) {
+                $latest = $school->distributions()
+                    ->orderByDesc('id')
+                    ->first();
                 // This is the inner fieldset for each school
                 return Fieldset::make($school->nama_sekolah) // Use school name as the label
                     ->schema([
                         // *** ADDED THIS HIDDEN FIELD ***
                         // This field holds the school ID as part of the data
-                        Hidden::make('porsi_per_sekolah.'.$school->id.'.sekolah_id')
+                        Hidden::make('porsi_per_sekolah.' . $school->id . '.sekolah_id')
                             ->default($school->id),
                         // The path now uses dot notation for the nested JSON structure
-                        TextInput::make('porsi_per_sekolah.'.$school->id.'.jumlah_porsi_besar')
+                        TextInput::make('porsi_per_sekolah.' . $school->id . '.jumlah_porsi_besar')
                             ->label('Jumlah Porsi Besar')
                             ->numeric()
+                            ->default($latest?->jumlah_porsi_besar ?? '')
                             ->required(),
-                        TextInput::make('porsi_per_sekolah.'.$school->id.'.jumlah_porsi_kecil')
+                        TextInput::make('porsi_per_sekolah.' . $school->id . '.jumlah_porsi_kecil')
                             ->label('Jumlah Porsi Kecil')
                             ->numeric()
+                            ->default($latest?->jumlah_porsi_kecil ?? '')
                             ->required(),
                     ])
                     ->columns(2); // Two columns inside this inner fieldset
@@ -120,7 +147,7 @@ class ProductionScheduleResource extends Resource
         foreach ($schools as $school) {
             $dynamicComponents[] = FieldSet::make($school->nama_sekolah)
                 ->schema([
-                    TextEntry::make('jumlah_porsi_besar_for_'.$school->id)
+                    TextEntry::make('jumlah_porsi_besar_for_' . $school->id)
                         ->label('Jumlah Porsi Besar')
                         // Use a custom state getter to find the right distribution
                         ->state(function (ProductionSchedule $record) use ($school) {
@@ -130,7 +157,7 @@ class ProductionScheduleResource extends Resource
 
                             return $distribution ? $distribution->jumlah_porsi_besar : '0';
                         }),
-                    TextEntry::make('jumlah_porsi_kecil_for_'.$school->id)
+                    TextEntry::make('jumlah_porsi_kecil_for_' . $school->id)
                         ->label('Jumlah Porsi Kecil')
                         ->state(function (ProductionSchedule $record) use ($school) {
                             $distribution = $record->distributions()
@@ -139,7 +166,7 @@ class ProductionScheduleResource extends Resource
 
                             return $distribution ? $distribution->jumlah_porsi_kecil : '0';
                         }),
-                    TextEntry::make('status_pengantaran_for_'.$school->id)
+                    TextEntry::make('status_pengantaran_for_' . $school->id)
                         ->label('Status Pengantaran')
                         ->state(function (ProductionSchedule $record) use ($school) {
                             $distribution = $record->distributions()
@@ -149,14 +176,14 @@ class ProductionScheduleResource extends Resource
                             return $distribution ? $distribution->status_pengantaran : null;
                         })
                         ->badge()
-                        ->color(fn (?string $state): string => match ($state) {
+                        ->color(fn(?string $state): string => match ($state) {
                             'Menunggu' => 'warning',
                             'Sedang Dikirim' => 'info',
                             'Terkirim' => 'success',
                             default => 'gray',
                         })
                         ->columnSpanFull(),
-                    TextEntry::make('courier'.$school->id) // 's' ditambahkan untuk key unik
+                    TextEntry::make('courier' . $school->id) // 's' ditambahkan untuk key unik
                         ->label('Petugas Pengantaran')
                         ->state(function (ProductionSchedule $record) use ($school) {
                             // Akses koleksi yang sudah dimuat
