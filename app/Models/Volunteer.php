@@ -12,7 +12,9 @@ class Volunteer extends Model
     protected $fillable = [
         'sppg_id',
         'nama_relawan',
+        'gender',
         'posisi',
         'kontak',
+        'address',
     ];
 }
