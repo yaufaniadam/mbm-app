@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Sppgs\Schemas;
 
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -33,6 +34,10 @@ class SppgForm
                     ->required(),
                 TextInput::make('nomor_va')
                     ->label('Nomor VA')
+                    ->required(),
+                DatePicker::make('tanggal_mulai_sewa')
+                    ->label('Tanggal SPPG Mulai Beroperasi')
+                    ->helperText('Bisa diisikan tanggal sppg akan mulai ditagih, jika sppg sudah beroperasi sebelum aplikasi ini dibuat.')
                     ->required(),
                 Textarea::make('alamat')
                     ->label('Alamat')
