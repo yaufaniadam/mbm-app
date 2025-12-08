@@ -19,6 +19,8 @@ return new class extends Migration
             $table->unsignedInteger('jumlah_porsi_besar')->default(0);
             $table->unsignedInteger('jumlah_porsi_kecil')->default(0);
             $table->enum('status_pengantaran', ['Menunggu', 'Sedang Dikirim', 'Terkirim'])->default('Menunggu');
+            $table->text('photo_of_proof')->nullable();
+            $table->text('notes')->nullable();
             $table->timestamp('delivered_at')->nullable();
             $table->timestamps();
         });
