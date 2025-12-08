@@ -46,6 +46,8 @@ class Sppg extends Model
         'city_code',
         'district_code',
         'village_code',
+        'latitude',
+        'longitude',
     ];
 
     /**
