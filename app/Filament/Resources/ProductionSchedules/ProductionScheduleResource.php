@@ -307,6 +307,14 @@ class ProductionScheduleResource extends Resource
             return parent::getEloquentQuery()->where('sppg_id', $unitTugas->id);
         }
 
+        if ($user->hasRole('Pimpinan Lembaga Pengusul')) {
+            $unitTugas = User::find($user->id)->lembagaDipimpin;
+
+            return parent::getEloquentQuery()->whereHas('sppg', function (Builder $query) use ($unitTugas) {
+                $query->where('lembaga_pengusul_id', $unitTugas->id);
+            });
+        }
+
         return parent::getEloquentQuery();
     }
 }
