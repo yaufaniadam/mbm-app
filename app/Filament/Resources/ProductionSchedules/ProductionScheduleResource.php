@@ -294,26 +294,29 @@ class ProductionScheduleResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         $user = Auth::user();
+        $query = parent::getEloquentQuery()
+            ->orderByDesc('tanggal');
+
         if ($user->hasRole('Kepala SPPG')) {
             $sppg = User::find($user->id)->sppgDikepalai;
 
-            return parent::getEloquentQuery()->where('sppg_id', $sppg->id);
+            return $query->where('sppg_id', $sppg->id);
         }
 
         if ($user->hasRole('PJ Pelaksana')) {
             $unitTugas = User::find($user->id)->unitTugas->first();
 
-            return parent::getEloquentQuery()->where('sppg_id', $unitTugas->id);
+            return $query->where('sppg_id', $unitTugas->id);
         }
 
         if ($user->hasRole('Pimpinan Lembaga Pengusul')) {
             $unitTugas = User::find($user->id)->lembagaDipimpin;
 
-            return parent::getEloquentQuery()->whereHas('sppg', function (Builder $query) use ($unitTugas) {
+            return $query->whereHas('sppg', function (Builder $query) use ($unitTugas) {
                 $query->where('lembaga_pengusul_id', $unitTugas->id);
             });
         }
 
-        return parent::getEloquentQuery();
+        return $query;
     }
 }
