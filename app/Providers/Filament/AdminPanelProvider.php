@@ -5,6 +5,7 @@ namespace App\Providers\Filament;
 use App\Filament\Pages\ManageFinance;
 use App\Filament\Pages\ProductionVerificationSetting;
 use App\Http\Middleware\CanAccessAdminPanel;
+use App\Livewire\OsmMapWidget;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -48,6 +49,7 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\Filament\Admin\Widgets')
             ->widgets([
                 AccountWidget::class,
+                OsmMapWidget::class,
                 // FilamentInfoWidget::class,
             ])
             ->middleware([
