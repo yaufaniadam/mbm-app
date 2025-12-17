@@ -133,4 +133,9 @@ class Sppg extends Model
     {
         return $this->hasMany(Bill::class);
     }
+
+    public function operatingExpenses()
+    {
+        return $this->hasMany(OperatingExpense::class);
+    }
 }
