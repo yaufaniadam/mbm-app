@@ -11,6 +11,17 @@ use Illuminate\Support\Facades\Auth;
 
 class OperatingExpensesStats extends StatsOverviewWidget
 {
+    public static function canView(): bool
+    {
+        return Auth::user()->hasAnyRole([
+            'Kepala SPPG',
+            'PJ Pelaksana',
+            'Superadmin',
+            'Staf Kornas',
+            'Direktur Kornas',
+        ]);
+    }
+
     protected function getStats(): array
     {
         $user = Auth::user();

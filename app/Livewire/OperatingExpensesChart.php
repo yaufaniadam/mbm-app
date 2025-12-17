@@ -12,6 +12,17 @@ class OperatingExpensesChart extends ChartWidget
 {
     protected ?string $heading = 'Biaya Operasional - Grafik';
 
+    public static function canView(): bool
+    {
+        return Auth::user()->hasAnyRole([
+            'Kepala SPPG',
+            'PJ Pelaksana',
+            'Superadmin',
+            'Staf Kornas',
+            'Direktur Kornas',
+        ]);
+    }
+
     protected function getData(): array
     {
         $user = Auth::user();

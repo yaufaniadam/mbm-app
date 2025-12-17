@@ -23,6 +23,17 @@ class OperatingExpenses extends TableWidget
 {
     protected static ?string $heading = 'Biaya Operasional';
 
+    public static function canView(): bool
+    {
+        return Auth::user()->hasAnyRole([
+            'Kepala SPPG',
+            'PJ Pelaksana',
+            'Superadmin',
+            'Staf Kornas',
+            'Direktur Kornas',
+        ]);
+    }
+
     public function table(Table $table): Table
     {
         return $table
