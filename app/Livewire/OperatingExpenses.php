@@ -3,7 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\OperatingExpense;
-use App\Models\OperatingExpenseCategories;
+use App\Models\OperatingExpenseCategory;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
@@ -164,8 +164,29 @@ class OperatingExpenses extends TableWidget
                 ->label('Kategori')
                 ->required()
                 ->searchable()
-                // Use 'name' as both the key and the value since your DB stores the string name
-                ->options(OperatingExpenseCategories::pluck('name', 'name'))
+                ->options(function () {
+                    $user = Auth::user();
+                    $sppgId = null;
+
+                    // 1. Determine SPPG ID
+                    if ($user->hasRole('Kepala SPPG')) {
+                        $sppgId = $user->sppgDikepalai?->id;
+                    } elseif ($user->hasRole('PJ Pelaksana')) {
+                        $sppgId = $user->unitTugas->first()?->id;
+                    }
+
+                    // 2. Query Logic
+                    return OperatingExpenseCategory::query()
+                        ->when($sppgId, function ($query) use ($sppgId) {
+                            // Local Users: See Global (null) + Their Own ($sppgId)
+                            return $query->where('sppg_id', $sppgId);
+                        })
+                        ->when(! $sppgId, function ($query) {
+                            // Admins: See only Global (null)
+                            return $query->whereNull('sppg_id');
+                        })
+                        ->pluck('name', 'name');
+                })
                 ->createOptionForm([
                     TextInput::make('name')
                         ->label('Nama Kategori')
@@ -173,8 +194,22 @@ class OperatingExpenses extends TableWidget
                         ->maxLength(255),
                 ])
                 ->createOptionUsing(function (array $data) {
-                    // Create the category and return the 'name' to be selected
-                    return OperatingExpenseCategories::create($data)->name;
+                    $user = Auth::user();
+                    $sppgId = null;
+
+                    // 1. Determine SPPG ID
+                    if ($user->hasRole('Kepala SPPG')) {
+                        $sppgId = $user->sppgDikepalai?->id;
+                    } elseif ($user->hasRole('PJ Pelaksana')) {
+                        $sppgId = $user->unitTugas->first()?->id;
+                    }
+
+                    // 2. Assign ID if Local User (Admins keep it null)
+                    if ($sppgId) {
+                        $data['sppg_id'] = $sppgId;
+                    }
+
+                    return OperatingExpenseCategory::create($data)->name;
                 }),
 
             TextInput::make('amount')
