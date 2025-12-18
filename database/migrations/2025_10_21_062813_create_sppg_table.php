@@ -16,8 +16,11 @@ return new class extends Migration
             $table->foreignId('kepala_sppg_id')->nullable()->unique();
             $table->string('nama_sppg');
             $table->string('kode_sppg');
+
             $table->string('nama_bank')->nullable();
             $table->string('nomor_va')->nullable();
+            $table->decimal('balance', 15, 2)->default(0);
+
             $table->text('alamat');
             $table->boolean('is_active')->default(true);
             $table->dateTime('tanggal_mulai_sewa')->nullable();
