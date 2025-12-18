@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('sppg_id')->nullable()->constrained('sppg')->cascadeOnDelete();
             $table->string('name')->nullable();
-            $table->integer('amount')->nullable();
+            $table->decimal('amount')->nullable();
             $table->date('date')->nullable();
             $table->string('category')->nullable();
             $table->text('attachment')->nullable();
