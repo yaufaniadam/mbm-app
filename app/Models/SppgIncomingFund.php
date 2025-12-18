@@ -5,16 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class OperatingExpense extends Model
+class SppgIncomingFund extends Model
 {
     use SoftDeletes;
 
     protected $fillable = [
+        'previous_version_id',
         'sppg_id',
-        'name',
+        'user_id',
         'amount',
-        'date',
-        'category',
+        'source',
+        'received_at',
+        'notes',
         'attachment',
     ];
 
@@ -23,16 +25,21 @@ class OperatingExpense extends Model
         return $this->belongsTo(Sppg::class);
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     // Relationship to see the OLD version
     public function previousVersion()
     {
         // We use paranoid() so we can retrieve the record even if it is soft-deleted
-        return $this->belongsTo(OperatingExpense::class, 'previous_version_id')->withTrashed();
+        return $this->belongsTo(SppgIncomingFund::class, 'previous_version_id')->withTrashed();
     }
 
     // Relationship to see the entire history (if you want to list them later)
     public function history()
     {
-        return $this->hasMany(OperatingExpense::class, 'previous_version_id');
+        return $this->hasMany(SppgIncomingFund::class, 'previous_version_id');
     }
 }
