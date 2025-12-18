@@ -43,6 +43,15 @@
             </x-filament::tabs.item>
         @endif
 
+        {{-- Tab 5: Dana Masuk --}}
+        {{-- Only show this tab to Sppg --}}
+        @if (auth()->user()->hasAnyRole(['Kepala SPPG', 'PJ Pelaksana']))
+            <x-filament::tabs.item :active="$activeTab === 'incoming_funds'" wire:click="$set('activeTab', 'incoming_funds')"
+                icon="heroicon-o-banknotes">
+                Dana Masuk
+            </x-filament::tabs.item>
+        @endif
+
     </x-filament::tabs>
 
     {{-- 2. The Tab Content (Lazy Loaded Widgets) --}}
@@ -84,6 +93,13 @@
                 @livewire(\App\Livewire\OperatingExpensesChart::class)
                 @livewire(\App\Livewire\OperatingExpenses::class)
             </div>
+        @endif
+
+        {{-- Content for Tab 6 --}}
+        @if ($activeTab === 'incoming_funds')
+            {{-- This renders the OperatingExpenses widget --}}
+            {{-- This renders the OperatingExpenses widget --}}
+            @livewire(\App\Livewire\IncomingFunds::class)
         @endif
 
     </div>
