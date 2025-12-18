@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('previous_version_id')->nullable()->constrained('operating_expenses')->nullOnDelete();
             $table->foreignId('sppg_id')->nullable()->constrained('sppg')->cascadeOnDelete();
             $table->string('name')->nullable();
-            $table->decimal('amount')->nullable();
+            $table->decimal('amount', 15, 2)->nullable();
             $table->date('date')->nullable();
             $table->string('category')->nullable();
             $table->text('attachment')->nullable();
