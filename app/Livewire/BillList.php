@@ -192,59 +192,58 @@ class BillList extends TableWidget
                     // === END: INFOLIST (Invoice View) ===
                     ->action(function (Bill $record, array $data) {
                         try {
-                            DB::beginTransaction();
+                            DB::transaction(function () use ($record, $data) {
+                                $user = Auth::user();
 
-                            $user = Auth::user();
+                                // --- LOGIC 1: BALANCE CHECK (SKIP FOR PIMPINAN) ---
+                                // We only check balance if the user is NOT a Pimpinan
+                                if (! $user->hasRole('Pimpinan Lembaga Pengusul')) {
 
-                            $sppg = null;
+                                    $sppg = null;
 
-                            if ($user->hasRole('Kepala SPPG')) {
-                                $sppg = User::find($user->id)->sppgDikepalai;
-                                if ($sppg->balance < $record->amount) {
-                                    Notification::make()
-                                        ->title('Gagal Mencatat Pembayaran')
-                                        ->body('Saldo SPPG Anda tidak mencukupi untuk melakukan pembayaran tagihan ini.')
-                                        ->danger()
-                                        ->send();
+                                    if ($user->hasRole('Kepala SPPG')) {
+                                        $sppg = $user->sppgDikepalai;
+                                    } elseif ($user->hasRole('PJ Pelaksana')) {
+                                        $sppg = $user->unitTugas->first();
+                                    }
 
-                                    return;
+                                    if ($sppg) {
+                                        $sppg->refresh(); // Get latest data
+
+                                        if ($sppg->balance < $record->amount) {
+                                            Notification::make()
+                                                ->title('Saldo Tidak Mencukupi')
+                                                ->body('Saldo SPPG: Rp '.number_format($sppg->balance, 0, ',', '.').'. Tagihan: Rp '.number_format($record->amount, 0, ',', '.'))
+                                                ->danger()
+                                                ->send();
+
+                                            // Stop execution
+                                            throw new Exception('Insufficient funds');
+                                        }
+                                    } else {
+                                        // Safety check if a non-Pimpinan user has no SPPG
+                                        throw new Exception('Akun Anda tidak terhubung dengan SPPG untuk pembayaran saldo.');
+                                    }
                                 }
-                            }
-                            if ($user->hasRole('PJ Pelaksana')) {
-                                $sppg = User::find($user->id)->unitTugas->first();
-                                if ($sppg->balance < $record->amount) {
-                                    Notification::make()
-                                        ->title('Gagal Mencatat Pembayaran')
-                                        ->body('Saldo SPPG Anda tidak mencukupi untuk melakukan pembayaran tagihan ini.')
-                                        ->danger()
-                                        ->send();
 
-                                    return;
-                                }
-                            }
+                                // --- LOGIC 2: CREATE REMITTANCE (STANDARD) ---
+                                Remittance::create([
+                                    'bill_id' => $record->id,
+                                    'user_id' => $user->id,
+                                    'amount_sent' => $record->amount,
+                                    'status' => 'pending',
+                                    'proof_file_path' => $data['proof_file_path'],
+                                    'source_bank_name' => $data['source_bank_name'],
+                                    'destination_bank_name' => $data['destination_bank_name'],
+                                    'transfer_date' => $data['transfer_date'],
+                                ]);
 
-                            // 1. Buat Record Remittance: Menyimpan semua data dari form dan mengaitkannya dengan Bill dan User.
-                            Remittance::create([
-                                'bill_id' => $record->id,
-                                'user_id' => Auth::id(), // Mendapatkan ID pengguna yang saat ini login
-                                // 'remittance_date' => now(), // Tanggal pembuatan record remittance
-                                'amount_sent' => $record->amount,
-                                'status' => 'pending', // Status default saat pertama kali dibuat
-                                'proof_file_path' => $data['proof_file_path'], // Path file yang tersimpan (sudah diunggah ke local)
-                                'source_bank_name' => $data['source_bank_name'],
-                                'destination_bank_name' => $data['destination_bank_name'],
-                                'transfer_date' => $data['transfer_date'],
-                                // 'rejection_reason' dibiarkan null
-                            ]);
-
-                            // 2. Update Status Bill: Mengubah status tagihan menjadi 'verification'
-                            $record->update(['status' => 'verification']);
-
-                            DB::commit();
+                                $record->update(['status' => 'verification']);
+                            });
 
                             Notification::make()
                                 ->title('Pembayaran Berhasil Dicatat')
-                                ->body('Bukti transfer Anda telah berhasil diunggah. Tagihan **'.$record->invoice_number.'** sedang menunggu verifikasi.')
+                                ->body('Tagihan menunggu verifikasi.')
                                 ->success()
                                 ->send();
                         } catch (Exception $e) {

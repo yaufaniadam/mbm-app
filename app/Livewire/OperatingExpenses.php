@@ -18,6 +18,7 @@ use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\HtmlString;
 
@@ -104,24 +105,45 @@ class OperatingExpenses extends TableWidget
                     ->visible(fn (OperatingExpense $record) => $record->attachment && ! $this->isImage($record->attachment))
                     ->action(fn (OperatingExpense $record) => Storage::disk('local')->download($record->attachment)),
 
-                // 3. Edit Action
+                // 3. AUDIT EDIT ACTION (Replaces Standard Edit)
                 EditAction::make()
-                    ->modalHeading('Ubah Data Pengeluaran')
+                    ->label('Revisi')
+                    ->icon('heroicon-m-pencil-square')
+                    ->color('warning')
+                    ->modalHeading('Revisi Biaya Operasional')
+                    ->modalDescription('PERHATIAN: Mengubah data ini akan membuat catatan baru dan mengarsipkan catatan lama sebagai histori (Audit Trail).')
                     ->schema($this->getFormSchema())
-                    // Logic: If user uploads a NEW file ($data['attachment']), delete the OLD file ($record->attachment)
-                    ->before(function (OperatingExpense $record, array $data) {
-                        $newFile = $data['attachment'] ?? null;
-                        $oldFile = $record->attachment;
+                    ->using(function (OperatingExpense $record, array $data): OperatingExpense {
+                        return DB::transaction(function () use ($record, $data) {
+                            // A. Prepare new data
+                            $newData = $data;
 
-                        if ($newFile !== $oldFile && $oldFile) {
-                            Storage::disk('local')->delete($oldFile);
-                        }
+                            // Inherit IDs from the original record
+                            $newData['sppg_id'] = $record->sppg_id;
+
+                            // Link to the old record
+                            $newData['previous_version_id'] = $record->id;
+
+                            // B. Create the NEW Record
+                            // Note: We do NOT delete the old file attachment.
+                            // Both records might point to the same file (if file wasn't changed),
+                            // or the new record has a new file. The old file stays for audit.
+                            $newRecord = OperatingExpense::create($newData);
+
+                            // C. Soft Delete the OLD Record
+                            $record->delete();
+
+                            return $newRecord;
+                        });
                     }),
 
-                // 4. Delete Action
+                // 4. SOFT DELETE ACTION
                 DeleteAction::make()
-                    // Logic: Delete file from storage after record is deleted
-                    ->after(fn (OperatingExpense $record) => $record->attachment ? Storage::disk('local')->delete($record->attachment) : null),
+                    ->label('Arsipkan')
+                    ->modalHeading('Arsipkan Pengeluaran Ini?')
+                    ->modalDescription('Data akan dihapus dari daftar aktif, namun tetap tersimpan di database untuk keperluan audit.'),
+                // IMPORTANT: Removed the 'after' hook that deleted the file.
+                // We must keep the file evidence for archived records.
             ])
             ->headerActions([
                 CreateAction::make()

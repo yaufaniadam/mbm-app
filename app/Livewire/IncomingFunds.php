@@ -27,7 +27,6 @@ class IncomingFunds extends TableWidget
         return Auth::user()->hasAnyRole([
             'Kepala SPPG',
             'PJ Pelaksana',
-
         ]);
     }
 
