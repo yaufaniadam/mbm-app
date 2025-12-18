@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('operating_expense_categories', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('sppg_id')->nullable()->constrained('sppg')->cascadeOnDelete();
             $table->string('name')->nullable();
             $table->timestamps();
         });
