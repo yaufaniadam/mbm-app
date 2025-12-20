@@ -63,7 +63,8 @@ class ProductionSchedulesTable
             ])
             ->recordActions([
                 ViewAction::make(),
-                EditAction::make(),
+                EditAction::make()
+                    ->hidden(fn () => \Filament\Facades\Filament::getCurrentPanel()->getId() === 'admin'),
                 \Filament\Actions\Action::make('evaluate')
                     ->label('Evaluasi')
                     ->icon('heroicon-o-clipboard-document-check')
@@ -128,16 +129,6 @@ class ProductionSchedulesTable
                             ->success()
                             ->send();
                     }),
-                \Filament\Actions\Action::make('view_evaluation')
-                    ->label('Lihat Evaluasi')
-                    ->icon('heroicon-o-document-magnifying-glass')
-                    ->color('info')
-                    ->visible(fn(ProductionSchedule $record) => $record->verification !== null)
-                    ->infolist(function (\Filament\Schemas\Schema $schema) {
-                        return \App\Filament\Resources\ProductionSchedules\Schemas\ProductionScheduleInfolist::configure($schema);
-                    })
-                    ->modalSubmitAction(false)
-                    ->modalCancelActionLabel('Tutup'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

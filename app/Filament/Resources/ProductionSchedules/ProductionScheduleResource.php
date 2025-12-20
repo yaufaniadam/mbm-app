@@ -203,12 +203,23 @@ class ProductionScheduleResource extends Resource
         return ProductionSchedulesTable::configure($table);
     }
 
-    /**
-     * Conditionally prevent editing based on record status.
-     */
-    public static function canEdit(Model $record): bool
+    public static function canCreate(): bool
     {
+        return \Filament\Facades\Filament::getCurrentPanel()?->getId() !== 'admin';
+    }
+
+    public static function canEdit(\Illuminate\Database\Eloquent\Model $record): bool
+    {
+        if (\Filament\Facades\Filament::getCurrentPanel()?->getId() === 'admin') {
+            return false;
+        }
+
         return $record->status === 'Direncanakan';
+    }
+
+    public static function canDelete(\Illuminate\Database\Eloquent\Model $record): bool
+    {
+        return \Filament\Facades\Filament::getCurrentPanel()?->getId() !== 'admin';
     }
 
     public static function getRelations(): array

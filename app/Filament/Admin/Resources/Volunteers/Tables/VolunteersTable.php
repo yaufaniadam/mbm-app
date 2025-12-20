@@ -17,24 +17,50 @@ class VolunteersTable
             ->columns([
                 TextColumn::make('nama_relawan')
                     ->label('Nama Relawan')
+                    ->description(fn($record) => "NIK: " . ($record->nik ?? '-'))
                     ->sortable()
                     ->searchable(),
+                TextColumn::make('category')
+                    ->label('Kategori')
+                    ->badge()
+                    ->color(fn(string $state): string => match ($state) {
+                        'Masak' => 'warning',
+                        'Asisten Dapur' => 'info',
+                        'Pengantaran' => 'success',
+                        'Kebersihan' => 'gray',
+                        'Keamanan' => 'danger',
+                        'Administrasi' => 'primary',
+                        default => 'gray',
+                    }),
                 TextColumn::make('posisi')
-                    ->label('Posisi')
+                    ->label('Posisi Spesifik')
                     ->sortable()
                     ->searchable(),
-                TextColumn::make('gender')
-                    ->label('L/P')
+                TextColumn::make('daily_rate')
+                    ->label('Upah/Hari')
+                    ->money('IDR', locale: 'id')
                     ->sortable(),
                 TextColumn::make('sppg.nama_sppg')
                     ->label('Unit SPPG')
-                    ->sortable()
-                    ->searchable(),
+                    ->sortable(),
                 TextColumn::make('kontak')
                     ->label('Kontak'),
             ])
             ->filters([
-                //
+                \Filament\Tables\Filters\SelectFilter::make('category')
+                    ->label('Kategori')
+                    ->options([
+                        'Masak' => 'Juru Masak',
+                        'Asisten Dapur' => 'Asisten Dapur',
+                        'Pengantaran' => 'Staf Pengantaran',
+                        'Kebersihan' => 'Tenaga Kebersihan',
+                        'Keamanan' => 'Tenaga Keamanan',
+                        'Administrasi' => 'Staf Administrasi',
+                        'Lainnya' => 'Lainnya',
+                    ]),
+                \Filament\Tables\Filters\SelectFilter::make('sppg_id')
+                    ->label('Unit SPPG')
+                    ->relationship('sppg', 'nama_sppg'),
             ])
             ->recordActions([
                 ViewAction::make(),
