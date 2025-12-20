@@ -17,4 +17,9 @@ class Volunteer extends Model
         'kontak',
         'address',
     ];
+
+    public function sppg()
+    {
+        return $this->belongsTo(Sppg::class);
+    }
 }

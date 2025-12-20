@@ -42,6 +42,7 @@ class AdminPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->resources([
                 \App\Filament\Admin\Resources\Schools\AdminSchoolResource::class,
+                \App\Filament\Admin\Resources\Volunteers\RelawanResource::class,
             ])
             ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\Filament\Admin\Pages')
             ->pages([

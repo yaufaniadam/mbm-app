@@ -49,7 +49,9 @@ class Dashboard extends BaseDashboard
     public function getWidgets(): array
     {
         return [
+            \App\Filament\Admin\Widgets\EfficiencyMonitorWidget::class,
             SppgStatsOverview::class,
+            \App\Filament\Admin\Widgets\SppgFinancialRadar::class,
             ProductionChart::class,
             ProductionScheduleList::class,
             ProductionDistributionList::class,
