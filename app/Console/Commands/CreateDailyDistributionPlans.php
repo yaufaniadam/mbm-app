@@ -54,13 +54,30 @@ class CreateDailyDistributionPlans extends Command
                 continue;
             }
 
+            // Calculate initial total portions based on default values
+            $initialTotal = $sppg->schools->sum(function ($school) {
+                return ($school->default_porsi_besar ?? 0) + ($school->default_porsi_kecil ?? 0);
+            });
+
             // Create new distribution plan
-            ProductionSchedule::create([
+            $schedule = ProductionSchedule::create([
                 'sppg_id' => $sppg->id,
                 'tanggal' => $today,
-                'menu_hari_ini' => null, // To be filled by admin
+                'menu_hari_ini' => '-', // To be filled by admin
+                'jumlah' => $initialTotal,
                 'status' => 'Direncanakan',
             ]);
+
+            // Create distribution details for each school
+            foreach ($sppg->schools as $school) {
+                \App\Models\Distribution::create([
+                    'jadwal_produksi_id' => $schedule->id,
+                    'sekolah_id' => $school->id,
+                    'jumlah_porsi_besar' => $school->default_porsi_besar ?? 0,
+                    'jumlah_porsi_kecil' => $school->default_porsi_kecil ?? 0,
+                    'status_pengantaran' => 'Menunggu',
+                ]);
+            }
 
             $this->info("✅ Created: {$sppg->nama_sppg}");
             $created++;

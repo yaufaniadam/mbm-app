@@ -32,6 +32,30 @@ class VolunteerResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+    public static function canAccess(): bool
+    {
+        $user = Auth::user();
+        return $user && $user->hasAnyRole([
+            'Kepala SPPG',
+            'PJ Pelaksana',
+            'Staf Administrator SPPG',
+            'Ahli Gizi',
+            'Staf Gizi',
+            'Staf Akuntan',
+            'Staf Pengantaran'
+        ]);
+    }
+
+    public static function canCreate(): bool
+    {
+        $user = Auth::user();
+        return $user && $user->hasAnyRole([
+            'Kepala SPPG',
+            'PJ Pelaksana',
+            'Staf Administrator SPPG'
+        ]);
+    }
+
     public static function form(Schema $schema): Schema
     {
         return VolunteerForm::configure($schema);

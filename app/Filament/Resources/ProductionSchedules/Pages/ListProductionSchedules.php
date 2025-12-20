@@ -14,7 +14,7 @@ class ListProductionSchedules extends ListRecords
     {
         return [
             CreateAction::make()
-                ->hidden(fn () => \Filament\Facades\Filament::getCurrentPanel()->getId() === 'sppg'),
+                ->hidden(fn () => in_array(\Filament\Facades\Filament::getCurrentPanel()->getId(), ['admin', 'sppg'])),
         ];
     }
 }

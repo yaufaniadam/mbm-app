@@ -49,6 +49,7 @@ class Dashboard extends BaseDashboard
     public function getWidgets(): array
     {
         return [
+            \App\Filament\Sppg\Widgets\IncompletePlanAlert::class,
             SppgStatsOverview::class,
             ProductionChart::class,
             ProductionScheduleList::class,

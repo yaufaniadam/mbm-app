@@ -31,6 +31,24 @@ class StaffResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+    public static function canAccess(): bool
+    {
+        $user = Auth::user();
+        return $user && $user->hasAnyRole([
+            'Kepala SPPG',
+            'Staf Administrator SPPG'
+        ]);
+    }
+
+    public static function canCreate(): bool
+    {
+        $user = Auth::user();
+        return $user && $user->hasAnyRole([
+            'Kepala SPPG',
+            'Staf Administrator SPPG'
+        ]);
+    }
+
     public static function form(Schema $schema): Schema
     {
         return StaffForm::configure($schema);
