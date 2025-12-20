@@ -55,8 +55,11 @@ class IncomingFunds extends TableWidget
                 return $query->whereRaw('1 = 0');
             })
             ->columns([
+                TextColumn::make('category.name')
+                    ->label('Kategori')
+                    ->badge(),
                 TextColumn::make('source')
-                    ->label('Sumber Dana')
+                    ->label('Keterangan Sumber')
                     ->searchable(),
                 TextColumn::make('amount')
                     ->label('Jumlah')
@@ -171,9 +174,22 @@ class IncomingFunds extends TableWidget
     protected function getFormSchema(): array
     {
         return [
+            Select::make('category_id')
+                ->label('Kategori Dana')
+                ->relationship('category', 'name')
+                ->required()
+                ->searchable()
+                ->preload()
+                ->createOptionForm([
+                    TextInput::make('name')
+                        ->label('Nama Kategori Baru')
+                        ->required()
+                        ->maxLength(255),
+                ]),
+
             TextInput::make('source')
-                ->label('Sumber Dana')
-                ->placeholder('Contoh: Donasi, Kas Pusat, dll')
+                ->label('Keterangan Sumber (Pihak Pengirim)')
+                ->placeholder('Contoh: PP Muhammadiyah, Hamba Allah')
                 ->required()
                 ->maxLength(255),
 

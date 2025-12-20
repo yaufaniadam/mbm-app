@@ -77,7 +77,7 @@ class OperatingExpenses extends TableWidget
                     ->label('Tanggal')
                     ->date('d M Y')
                     ->sortable(),
-                TextColumn::make('category')
+                TextColumn::make('categoryData.name')
                     ->label('Kategori')
                     ->badge(),
             ])
@@ -199,57 +199,18 @@ class OperatingExpenses extends TableWidget
                 ->required()
                 ->maxLength(255),
 
-            Select::make('category')
+            Select::make('category_id')
                 ->label('Kategori')
+                ->relationship('categoryData', 'name')
                 ->required()
                 ->searchable()
-                ->options(function () {
-                    $user = Auth::user();
-                    $sppgId = null;
-
-                    // 1. Determine SPPG ID
-                    if ($user->hasRole('Kepala SPPG')) {
-                        $sppgId = $user->sppgDikepalai?->id;
-                    } elseif ($user->hasRole('PJ Pelaksana')) {
-                        $sppgId = $user->unitTugas->first()?->id;
-                    }
-
-                    // 2. Query Logic
-                    return OperatingExpenseCategory::query()
-                        ->when($sppgId, function ($query) use ($sppgId) {
-                            // Local Users: See Global (null) + Their Own ($sppgId)
-                            return $query->where('sppg_id', $sppgId);
-                        })
-                        ->when(! $sppgId, function ($query) {
-                            // Admins: See only Global (null)
-                            return $query->whereNull('sppg_id');
-                        })
-                        ->pluck('name', 'name');
-                })
+                ->preload()
                 ->createOptionForm([
                     TextInput::make('name')
-                        ->label('Nama Kategori')
+                        ->label('Nama Kategori Baru')
                         ->required()
                         ->maxLength(255),
-                ])
-                ->createOptionUsing(function (array $data) {
-                    $user = Auth::user();
-                    $sppgId = null;
-
-                    // 1. Determine SPPG ID
-                    if ($user->hasRole('Kepala SPPG')) {
-                        $sppgId = $user->sppgDikepalai?->id;
-                    } elseif ($user->hasRole('PJ Pelaksana')) {
-                        $sppgId = $user->unitTugas->first()?->id;
-                    }
-
-                    // 2. Assign ID if Local User (Admins keep it null)
-                    if ($sppgId) {
-                        $data['sppg_id'] = $sppgId;
-                    }
-
-                    return OperatingExpenseCategory::create($data)->name;
-                }),
+                ]),
 
             TextInput::make('amount')
                 ->label('Jumlah Biaya')
