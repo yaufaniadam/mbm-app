@@ -15,6 +15,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use UnitEnum;
 
 class ProductionVerificationSetting extends Page implements HasActions, HasForms
 {
@@ -22,11 +23,13 @@ class ProductionVerificationSetting extends Page implements HasActions, HasForms
 
     protected string $view = 'filament.pages.production-verification-setting';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Pengaturan';
+    protected static string|UnitEnum|null $navigationGroup = 'Sistem';
 
-    protected static ?string $navigationLabel = 'Ceklis Verifikasi Jadwal Produksi';
+    protected static ?int $navigationSort = 1;
 
-    protected ?string $heading = 'Daftar Verifikasi';
+    protected static ?string $navigationLabel = 'Ketentuan Verifikasi';
+
+    protected ?string $heading = 'Ketentuan Verifikasi Produksi';
 
     public ?array $data = [];
 

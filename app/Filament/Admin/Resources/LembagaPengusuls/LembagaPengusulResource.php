@@ -9,6 +9,7 @@ use App\Filament\Admin\Resources\LembagaPengusuls\Schemas\LembagaPengusulForm;
 use App\Filament\Admin\Resources\LembagaPengusuls\Tables\LembagaPengusulsTable;
 use App\Models\LembagaPengusul;
 use BackedEnum;
+use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -20,7 +21,11 @@ class LembagaPengusulResource extends Resource
 
     protected static ?string $navigationLabel = 'Lembaga Pengusul';
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|UnitEnum|null $navigationGroup = 'Kelembagaan';
+
+    protected static ?int $navigationSort = 3;
+
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-briefcase';
 
     public static function form(Schema $schema): Schema
     {

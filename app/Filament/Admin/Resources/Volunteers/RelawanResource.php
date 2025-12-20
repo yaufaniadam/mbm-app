@@ -21,13 +21,15 @@ class RelawanResource extends Resource
 
     protected static ?string $slug = 'volunteers';
 
+    protected static ?string $navigationLabel = 'Relawan SPPG';
+
+    protected static string|UnitEnum|null $navigationGroup = 'SDM & Pengguna';
+
+    protected static ?int $navigationSort = 1;
+
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-user-group';
 
-    protected static ?string $navigationLabel = 'Daftar Relawan';
-
-    protected static string|UnitEnum|null $navigationGroup = 'Manajemen Data';
-
-    protected static ?string $pluralLabel = 'Relawan';
+    protected static ?string $pluralLabel = 'Relawan SPPG';
 
     public static function form(Schema $schema): Schema
     {

@@ -12,6 +12,7 @@ use App\Filament\Resources\ProductionSchedules\Tables\ProductionSchedulesTable;
 use App\Models\ProductionSchedule;
 use App\Models\User;
 use BackedEnum;
+use UnitEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\TextInput;
@@ -34,7 +35,11 @@ class ProductionScheduleResource extends Resource
 
     protected static ?string $navigationLabel = 'Jadwal Produksi';
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|UnitEnum|null $navigationGroup = 'Operasional';
+
+    protected static ?int $navigationSort = 1;
+
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-calendar-days';
 
     public static function getNavigationBadge(): ?string
     {

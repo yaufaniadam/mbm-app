@@ -6,6 +6,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Gate;
+use UnitEnum;
 
 class ManageFinance extends Page implements HasForms
 {
@@ -13,7 +14,9 @@ class ManageFinance extends Page implements HasForms
 
     protected string $view = 'filament.pages.manage-finance';
 
-    protected ?string $heading = '';
+    protected static string|UnitEnum|null $navigationGroup = 'Operasional';
+
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $navigationLabel = 'Keuangan';
 
