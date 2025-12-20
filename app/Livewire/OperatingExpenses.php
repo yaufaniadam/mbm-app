@@ -33,6 +33,7 @@ class OperatingExpenses extends TableWidget
             'PJ Pelaksana',
             'Superadmin',
             'Staf Kornas',
+            'Staf Akuntan Kornas',
             'Direktur Kornas',
         ]);
     }
@@ -50,7 +51,7 @@ class OperatingExpenses extends TableWidget
                 if ($user->hasRole('PJ Pelaksana')) {
                     return $query->where('sppg_id', $user->unitTugas->first()?->id);
                 }
-                if ($user->hasAnyRole(['Superadmin', 'Staf Kornas', 'Direktur Kornas'])) {
+                if ($user->hasAnyRole(['Superadmin', 'Staf Kornas', 'Staf Akuntan Kornas', 'Direktur Kornas'])) {
                     // National roles see ALL expenses
                     return $query;
                 }
@@ -64,7 +65,7 @@ class OperatingExpenses extends TableWidget
                     ->color('gray')
                     ->searchable()
                     ->sortable()
-                    ->visible(fn () => Auth::user()->hasAnyRole(['Superadmin', 'Staf Kornas', 'Direktur Kornas'])),
+                    ->visible(fn () => Auth::user()->hasAnyRole(['Superadmin', 'Staf Kornas', 'Staf Akuntan Kornas', 'Direktur Kornas'])),
                 TextColumn::make('name')
                     ->label('Nama Pengeluaran')
                     ->searchable(),
@@ -86,7 +87,7 @@ class OperatingExpenses extends TableWidget
                     ->relationship('sppg', 'nama_sppg')
                     ->searchable()
                     ->preload()
-                    ->visible(fn () => Auth::user()->hasAnyRole(['Superadmin', 'Staf Kornas', 'Direktur Kornas'])),
+                    ->visible(fn () => Auth::user()->hasAnyRole(['Superadmin', 'Staf Kornas', 'Staf Akuntan Kornas', 'Direktur Kornas'])),
             ])
             ->recordActions([
                 // 1. View Image Action (Only visible if image)

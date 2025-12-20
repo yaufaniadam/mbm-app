@@ -29,6 +29,7 @@ class IncomingFunds extends TableWidget
             'PJ Pelaksana',
             'Superadmin',
             'Staf Kornas',
+            'Staf Akuntan Kornas',
             'Direktur Kornas',
         ]);
     }
@@ -46,7 +47,7 @@ class IncomingFunds extends TableWidget
                 if ($user->hasRole('PJ Pelaksana')) {
                     return $query->where('sppg_id', $user->unitTugas->first()?->id);
                 }
-                if ($user->hasAnyRole(['Superadmin', 'Staf Kornas', 'Direktur Kornas'])) {
+                if ($user->hasAnyRole(['Superadmin', 'Staf Kornas', 'Staf Akuntan Kornas', 'Direktur Kornas'])) {
                     // National roles: See 'Central' funds (sppg_id = null)
                     return $query->whereNull('sppg_id');
                 }

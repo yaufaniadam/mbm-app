@@ -63,6 +63,7 @@ class RolePermissionSeeder extends Seeder
             'Staf Administrator SPPG',
             'Staf Gizi',
             'Staf Akuntan',
+            'Staf Akuntan Kornas',
             'Staf Pengantaran',
         ];
 
@@ -115,6 +116,14 @@ class RolePermissionSeeder extends Seeder
         // Staf Akuntan
         $roleModels['Staf Akuntan']->syncPermissions(['view-sppg-reports', 'manage-sppg-finance', 'view-sppg-dashboard']);
 
+        // Staf Akuntan Kornas (NEW)
+        $roleModels['Staf Akuntan Kornas']->syncPermissions([
+            'view-national-dashboard',
+            'view-national-reports',
+            'manage-sppg-finance', // Reusing this for general finance management
+            'confirm-kornas-deposit',
+        ]);
+
         // Staf Pengantaran
         $roleModels['Staf Pengantaran']->syncPermissions(['confirm-distribusi', 'view-sppg-dashboard']);
 
@@ -138,6 +147,12 @@ class RolePermissionSeeder extends Seeder
             ['name' => 'Staf Kornas MBM', 'password' => Hash::make('p4$$w0rd')]
         );
         $stafKornas->assignRole($roleModels['Staf Kornas']);
+
+        $stafAkuntanKornas = User::firstOrCreate(
+            ['email' => 'akuntan.kornas@mbm.com'],
+            ['name' => 'Staf Akuntan Kornas MBM', 'password' => Hash::make('p4$$w0rd')]
+        );
+        $stafAkuntanKornas->assignRole($roleModels['Staf Akuntan Kornas']);
 
 
         // User Level SPPG (terikat pada SPPG pertama yang ada di database)

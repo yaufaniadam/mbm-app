@@ -69,7 +69,7 @@ class VerifyPaymentList extends TableWidget
                         ->label('SPPG')
                         ->weight('bold')
                         ->icon('heroicon-m-building-office')
-                        ->visible(fn () => Auth::user()->hasAnyRole(['Staf Kornas', 'Direktur Kornas'])),
+                        ->visible(fn () => Auth::user()->hasAnyRole(['Staf Kornas', 'Staf Akuntan Kornas', 'Direktur Kornas'])),
 
                     TextColumn::make('period_range')
                         ->label('Periode')
@@ -344,7 +344,6 @@ class VerifyPaymentList extends TableWidget
     private function canVerifyOrReject(): bool
     {
         $user = Auth::user();
-        // Ganti 'Kepala Lembaga Pengusul' dan 'Staf Kornas' sesuai dengan nama role yang sebenarnya di database Anda.
-        return $user && ($user->hasAnyRole(['Pimpinan Lembaga Pengusul', 'Staf Kornas', 'Direktur Kornas']));
+        return $user && ($user->hasAnyRole(['Pimpinan Lembaga Pengusul', 'Staf Kornas', 'Staf Akuntan Kornas', 'Direktur Kornas']));
     }
 }

@@ -18,7 +18,7 @@
 
         {{-- Tab 2: Verifikasi (Uang Masuk) --}}
         {{-- Only show this tab to Pengusul or Kornas --}}
-        @if (auth()->user()->hasAnyRole(['Pimpinan Lembaga Pengusul', 'Staf Kornas', 'Direktur Kornas']))
+        @if (auth()->user()->hasAnyRole(['Pimpinan Lembaga Pengusul', 'Staf Kornas', 'Staf Akuntan Kornas', 'Direktur Kornas']))
             <x-filament::tabs.item :active="$activeTab === 'verify'" wire:click="$set('activeTab', 'verify')"
                 icon="heroicon-o-check-badge">
                 Verifikasi Pembayaran
@@ -27,7 +27,7 @@
 
         {{-- Tab 3: Transaksi Masuk --}}
         {{-- Only show this tab to Pengusul or Kornas --}}
-        @if (auth()->user()->hasAnyRole(['Pimpinan Lembaga Pengusul', 'Staf Kornas', 'Direktur Kornas']))
+        @if (auth()->user()->hasAnyRole(['Pimpinan Lembaga Pengusul', 'Staf Kornas', 'Staf Akuntan Kornas', 'Direktur Kornas']))
             <x-filament::tabs.item :active="$activeTab === 'incoming_payment'" wire:click="$set('activeTab', 'incoming_payment')"
                 icon="heroicon-o-arrow-trending-up">
                 Transaksi Masuk
@@ -36,7 +36,7 @@
 
         {{-- Tab 4: Biaya Operasional --}}
         {{-- Only show this tab to Sppg or Kornas --}}
-        @if (auth()->user()->hasAnyRole(['Kepala SPPG', 'PJ Pelaksana', 'Staf Kornas', 'Direktur Kornas']))
+        @if (auth()->user()->hasAnyRole(['Kepala SPPG', 'PJ Pelaksana', 'Staf Kornas', 'Staf Akuntan Kornas', 'Direktur Kornas']))
             <x-filament::tabs.item :active="$activeTab === 'operating_expenses'" wire:click="$set('activeTab', 'operating_expenses')"
                 icon="heroicon-o-arrow-trending-up">
                 Biaya Operasional
@@ -45,7 +45,7 @@
 
         {{-- Tab 5: Dana Masuk --}}
         {{-- Only show this tab to Sppg --}}
-        @if (auth()->user()->hasAnyRole(['Kepala SPPG', 'PJ Pelaksana', 'Staf Kornas', 'Direktur Kornas']))
+        @if (auth()->user()->hasAnyRole(['Kepala SPPG', 'PJ Pelaksana', 'Staf Kornas', 'Staf Akuntan Kornas', 'Direktur Kornas']))
             <x-filament::tabs.item :active="$activeTab === 'incoming_funds'" wire:click="$set('activeTab', 'incoming_funds')"
                 icon="heroicon-o-banknotes">
                 Dana Masuk
