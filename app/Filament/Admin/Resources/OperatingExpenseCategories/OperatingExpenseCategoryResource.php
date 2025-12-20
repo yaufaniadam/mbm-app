@@ -4,18 +4,20 @@ namespace App\Filament\Admin\Resources\OperatingExpenseCategories;
 
 use App\Filament\Admin\Resources\OperatingExpenseCategories\Pages;
 use App\Models\OperatingExpenseCategory;
+use BackedEnum;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema; // Changed from Form
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Actions;
 use UnitEnum;
 
 class OperatingExpenseCategoryResource extends Resource
 {
     protected static ?string $model = OperatingExpenseCategory::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-tag';
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-tag';
 
     protected static ?string $navigationLabel = 'Kategori Biaya Operasional';
 
@@ -23,10 +25,10 @@ class OperatingExpenseCategoryResource extends Resource
 
     protected static ?int $navigationSort = 2;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
@@ -48,11 +50,11 @@ class OperatingExpenseCategoryResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                Actions\BulkActionGroup::make([
+                    Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

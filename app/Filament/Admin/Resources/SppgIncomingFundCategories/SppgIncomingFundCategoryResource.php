@@ -4,18 +4,20 @@ namespace App\Filament\Admin\Resources\SppgIncomingFundCategories;
 
 use App\Filament\Admin\Resources\SppgIncomingFundCategories\Pages;
 use App\Models\SppgIncomingFundCategory;
+use BackedEnum;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Actions;
 use UnitEnum;
 
 class SppgIncomingFundCategoryResource extends Resource
 {
     protected static ?string $model = SppgIncomingFundCategory::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-tag';
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-tag';
     
     protected static ?string $navigationLabel = 'Kategori Dana Masuk';
     
@@ -23,10 +25,10 @@ class SppgIncomingFundCategoryResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
@@ -48,11 +50,11 @@ class SppgIncomingFundCategoryResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                Actions\BulkActionGroup::make([
+                    Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }
