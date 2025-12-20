@@ -33,13 +33,23 @@ class ProductionScheduleResource extends Resource
 {
     protected static ?string $model = ProductionSchedule::class;
 
-    protected static ?string $navigationLabel = 'Jadwal Produksi';
+    protected static ?string $navigationLabel = 'Rencana Distribusi';
 
     protected static string|UnitEnum|null $navigationGroup = 'Operasional';
 
     protected static ?int $navigationSort = 1;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-calendar-days';
+
+    public static function getModelLabel(): string
+    {
+        return 'Rencana Distribusi';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return 'Rencana Distribusi';
+    }
 
     public static function getNavigationBadge(): ?string
     {
@@ -205,7 +215,15 @@ class ProductionScheduleResource extends Resource
 
     public static function canCreate(): bool
     {
-        return \Filament\Facades\Filament::getCurrentPanel()?->getId() !== 'admin';
+        $panelId = \Filament\Facades\Filament::getCurrentPanel()?->getId();
+        
+        // SPPG panel: Auto-generated only, no manual creation
+        if ($panelId === 'sppg') {
+            return false;
+        }
+        
+        // Admin panel: Also read-only
+        return $panelId !== 'admin';
     }
 
     public static function canEdit(\Illuminate\Database\Eloquent\Model $record): bool

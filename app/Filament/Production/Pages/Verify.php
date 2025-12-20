@@ -74,7 +74,7 @@ class Verify extends Page implements HasForms
 
         if (! $this->record) {
             Notification::make()
-                ->title('Jadwal produksi tidak ditemukan.')
+                ->title('Rencana distribusi tidak ditemukan.')
                 ->danger()
                 ->send();
 

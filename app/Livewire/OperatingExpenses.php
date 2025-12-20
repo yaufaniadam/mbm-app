@@ -131,6 +131,7 @@ class OperatingExpenses extends TableWidget
                     ->label('Revisi')
                     ->icon('heroicon-m-pencil-square')
                     ->color('warning')
+                    ->visible(fn () => ! Auth::user()->hasAnyRole(['Superadmin', 'Direktur Kornas']))
                     ->modalHeading('Revisi Biaya Operasional')
                     ->modalDescription('PERHATIAN: Mengubah data ini akan membuat catatan baru dan mengarsipkan catatan lama sebagai histori (Audit Trail).')
                     ->schema($this->getFormSchema())
@@ -161,6 +162,7 @@ class OperatingExpenses extends TableWidget
                 // 4. SOFT DELETE ACTION
                 DeleteAction::make()
                     ->label('Arsipkan')
+                    ->visible(fn () => ! Auth::user()->hasAnyRole(['Superadmin', 'Direktur Kornas']))
                     ->modalHeading('Arsipkan Pengeluaran Ini?')
                     ->modalDescription('Data akan dihapus dari daftar aktif, namun tetap tersimpan di database untuk keperluan audit.'),
                 // IMPORTANT: Removed the 'after' hook that deleted the file.
@@ -169,6 +171,7 @@ class OperatingExpenses extends TableWidget
             ->headerActions([
                 CreateAction::make()
                     ->label('Tambah Pengeluaran')
+                    ->visible(fn () => ! Auth::user()->hasAnyRole(['Superadmin', 'Direktur Kornas']))
                     ->modalHeading('Catat Biaya Operasional Baru')
                     ->mutateDataUsing(function (array $data): array {
                         $user = Auth::user();

@@ -344,6 +344,6 @@ class VerifyPaymentList extends TableWidget
     private function canVerifyOrReject(): bool
     {
         $user = Auth::user();
-        return $user && ($user->hasAnyRole(['Pimpinan Lembaga Pengusul', 'Staf Kornas', 'Staf Akuntan Kornas', 'Direktur Kornas']));
+        return $user && ($user->hasAnyRole(['Pimpinan Lembaga Pengusul', 'Staf Kornas', 'Staf Akuntan Kornas']));
     }
 }

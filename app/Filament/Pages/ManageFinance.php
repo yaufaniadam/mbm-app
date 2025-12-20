@@ -20,7 +20,7 @@ class ManageFinance extends Page implements HasForms
 
     protected static ?string $navigationLabel = 'Keuangan';
 
-    public $activeTab = 'pay';
+    public $activeTab = 'dashboard';
 
     public static function canAccess(): bool
     {
@@ -75,7 +75,7 @@ class ManageFinance extends Page implements HasForms
         // If the current tab (either 'pay' or 'verify') is still forbidden for this user,
         // find the first tab they ARE allowed to see.
         if (! $this->canViewTab($this->activeTab)) {
-            foreach (['pay', 'transaction', 'verify', 'incoming_payment', 'operating_expenses'] as $tab) {
+            foreach (['dashboard', 'pay', 'transaction', 'verify', 'incoming_payment', 'operating_expenses', 'incoming_funds'] as $tab) {
                 if ($this->canViewTab($tab)) {
                     $this->activeTab = $tab;
                     break;
@@ -93,12 +93,13 @@ class ManageFinance extends Page implements HasForms
         }
 
         return match ($tab) {
-            'pay' => $user->hasAnyRole(['Pimpinan Lembaga Pengusul', 'Kepala SPPG', 'PJ Pelaksana', 'Staf Akuntan']),
-            'transaction' => $user->hasAnyRole(['Pimpinan Lembaga Pengusul', 'Kepala SPPG', 'PJ Pelaksana', 'Staf Akuntan']),
-            'verify' => $user->hasAnyRole(['Pimpinan Lembaga Pengusul', 'Staf Kornas', 'Staf Akuntan Kornas', 'Direktur Kornas']),
-            'incoming_payment' => $user->hasAnyRole(['Pimpinan Lembaga Pengusul', 'Staf Kornas', 'Staf Akuntan Kornas', 'Direktur Kornas']),
-            'operating_expenses' => $user->hasAnyRole(['Kepala SPPG', 'Staf Akuntan', 'Staf Kornas', 'Staf Akuntan Kornas', 'Direktur Kornas']),
-            'incoming_funds' => $user->hasAnyRole(['Kepala SPPG', 'PJ Pelaksana', 'Staf Akuntan', 'Staf Kornas', 'Staf Akuntan Kornas', 'Direktur Kornas']),
+            'dashboard' => $user->hasAnyRole(['Superadmin', 'Pimpinan Lembaga Pengusul', 'Kepala SPPG', 'PJ Pelaksana', 'Staf Akuntan', 'Staf Kornas', 'Staf Akuntan Kornas', 'Direktur Kornas']),
+            'pay' => $user->hasAnyRole(['Superadmin', 'Pimpinan Lembaga Pengusul', 'Kepala SPPG', 'PJ Pelaksana', 'Staf Akuntan']),
+            'transaction' => $user->hasAnyRole(['Superadmin', 'Pimpinan Lembaga Pengusul', 'Kepala SPPG', 'PJ Pelaksana', 'Staf Akuntan']),
+            'verify' => $user->hasAnyRole(['Superadmin', 'Pimpinan Lembaga Pengusul', 'Staf Kornas', 'Staf Akuntan Kornas', 'Direktur Kornas']),
+            'incoming_payment' => $user->hasAnyRole(['Superadmin', 'Pimpinan Lembaga Pengusul', 'Staf Kornas', 'Staf Akuntan Kornas', 'Direktur Kornas']),
+            'operating_expenses' => $user->hasAnyRole(['Superadmin', 'Kepala SPPG', 'Staf Akuntan', 'Staf Kornas', 'Staf Akuntan Kornas', 'Direktur Kornas']),
+            'incoming_funds' => $user->hasAnyRole(['Superadmin', 'Kepala SPPG', 'PJ Pelaksana', 'Staf Akuntan', 'Staf Kornas', 'Staf Akuntan Kornas', 'Direktur Kornas']),
             default => false,
         };
     }
