@@ -59,75 +59,7 @@ class ProductionScheduleResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        // 1. Get the Schema object configured with static components
-        $formSchema = ProductionScheduleForm::configure($schema);
-
-        // 2. Prepare an empty array for our dynamic fields
-        $dynamicSchoolComponents = [];
-
-        /** @var User $user */
-        $user = Auth::user();
-
-        $sppg = null;
-
-        if ($user->hasRole('Kepala SPPG')) {
-            $sppg = User::find($user->id)->sppgDikepalai;
-        }
-
-        if ($user->hasRole('PJ Pelaksana')) {
-            $sppg = User::find($user->id)->unitTugas->first();
-        }
-
-        $schools = $sppg ? $sppg->schools : collect(); // Assuming 'schools' is the relationship name
-
-        // 4. If the user has schools, create an inner Fieldset for each one
-        if ($schools->isNotEmpty()) {
-
-            // We use map() to transform each school into its own Fieldset component
-            $schoolFieldsets = $schools->map(function ($school) {
-                $latest = $school->distributions()
-                    ->orderByDesc('id')
-                    ->first();
-                // This is the inner fieldset for each school
-                return Fieldset::make($school->nama_sekolah) // Use school name as the label
-                    ->schema([
-                        // *** ADDED THIS HIDDEN FIELD ***
-                        // This field holds the school ID as part of the data
-                        Hidden::make('porsi_per_sekolah.' . $school->id . '.sekolah_id')
-                            ->default($school->id),
-                        // The path now uses dot notation for the nested JSON structure
-                        TextInput::make('porsi_per_sekolah.' . $school->id . '.jumlah_porsi_besar')
-                            ->label('Jumlah Porsi Besar')
-                            ->numeric()
-                            ->default($latest?->jumlah_porsi_besar ?? '')
-                            ->required(),
-                        TextInput::make('porsi_per_sekolah.' . $school->id . '.jumlah_porsi_kecil')
-                            ->label('Jumlah Porsi Kecil')
-                            ->numeric()
-                            ->default($latest?->jumlah_porsi_kecil ?? '')
-                            ->required(),
-                    ])
-                    ->columns(2); // Two columns inside this inner fieldset
-            })->all(); // Convert the collection to a plain array
-
-            // 5. Wrap all the individual school fieldsets in one main Fieldset
-            $dynamicSchoolComponents = [
-                Fieldset::make('Jumlah Porsi Per Sekolah')
-                    ->schema($schoolFieldsets) // Add the array of fieldsets
-                    ->columns(1), // Stack each school's fieldset vertically
-            ];
-        }
-
-        // 6. Get static components from the schema and merge with dynamic ones
-        $staticComponents = $formSchema->getComponents();
-
-        // 7. Return the final schema by setting its components
-        return $schema->schema(
-            array_merge(
-                $staticComponents,
-                $dynamicSchoolComponents
-            )
-        );
+        return ProductionScheduleForm::configure($schema);
     }
 
     public static function infolist(Schema $schema): Schema
