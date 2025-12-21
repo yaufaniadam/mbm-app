@@ -46,6 +46,13 @@ class RolePermissionSeeder extends Seeder
             'manage-sppg-finance',
             'manage-sppg-profile',
             'confirm-kornas-deposit', // Khusus Staf Kornas
+
+            // Policy-based permissions for Production Schedule
+            'ViewAny:ProductionSchedule',
+            'View:ProductionSchedule',
+            'Create:ProductionSchedule',
+            'Update:ProductionSchedule',
+            'Delete:ProductionSchedule'
         ];
 
         foreach ($permissions as $permission) {
@@ -100,11 +107,26 @@ class RolePermissionSeeder extends Seeder
             'manage-jadwal-produksi',
             'view-sppg-reports',
             'manage-sppg-finance',
-            'manage-sppg-profile'
+            'manage-sppg-profile',
+            // Production Schedule
+            'ViewAny:ProductionSchedule',
+            'View:ProductionSchedule',
+            'Create:ProductionSchedule',
+            'Update:ProductionSchedule',
+            'Delete:ProductionSchedule'
         ]);
 
         // PJ Pelaksana
-        $roleModels['PJ Pelaksana']->syncPermissions(['view-sppg-dashboard', 'view-sppg-reports']);
+        $roleModels['PJ Pelaksana']->syncPermissions([
+            'view-sppg-dashboard',
+            'view-sppg-reports',
+            // Production Schedule
+            'ViewAny:ProductionSchedule',
+            'View:ProductionSchedule',
+            'Create:ProductionSchedule',
+            'Update:ProductionSchedule',
+            'Delete:ProductionSchedule'
+        ]);
 
         // Penerima Kuasa
         $roleModels['Penerima Kuasa']->syncPermissions(['view-sppg-dashboard', 'view-sppg-reports']);
@@ -113,7 +135,12 @@ class RolePermissionSeeder extends Seeder
         $roleModels['Staf Administrator SPPG']->syncPermissions([
             'view-sppg-dashboard', 
             'manage-jadwal-produksi',
-            'manage-sppg-profile'
+            'manage-sppg-profile',
+            // Production Schedule
+            'ViewAny:ProductionSchedule',
+            'View:ProductionSchedule',
+            'Create:ProductionSchedule',
+            'Update:ProductionSchedule'
         ]);
 
         // Staf Gizi
