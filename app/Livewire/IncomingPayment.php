@@ -6,7 +6,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
 use Illuminate\Database\Eloquent\Builder;
-use App\Models\Invoice; // Changed from Remittance
+use App\Models\Invoice;
 use App\Models\User;
 use Exception;
 use Filament\Actions\Action;
@@ -48,13 +48,12 @@ class IncomingPayment extends TableWidget
                           ->where('type', 'SPPG_SEWA');
                 }
 
-                if (Auth::user()->hasAnyRole(['Staf Kornas', 'Direktur Kornas'])) {
-                    // Incoming Royalty from Lembaga Pengusul
-                    $query->where('type', 'LP_ROYALTY');
-                }
+                // Kornas sees everything (no restriction needed)
 
-                // Show Paid and Rejected (history/verified)
-                $query->whereIn('status', ['PAID', 'REJECTED']);
+                // Show Paid, Rejected AND WAITING VERIFICATION
+                // This ensures the user sees the payment immediately after submission.
+                $query->whereIn('status', ['PAID', 'REJECTED', 'WAITING_VERIFICATION']);
+
                 $query->orderBy('updated_at', 'desc');
 
                 return $query;
@@ -101,6 +100,7 @@ class IncomingPayment extends TableWidget
                     ->schema([
                         CheckboxList::make('statuses')
                             ->options([
+                                'WAITING_VERIFICATION' => 'Menunggu Verifikasi',
                                 'PAID' => 'Pembayaran Diterima',
                                 'REJECTED' => 'Pembayaran Ditolak',
                             ])
@@ -168,8 +168,6 @@ class IncomingPayment extends TableWidget
                         ->label('SPPG / Unit')
                         ->weight('bold')
                         ->copyable(),
-                    // Invoice doesn't store user who paid, only SPPG/Source.
-                    // We can show type to indicate context
                     TextEntry::make('type')
                         ->label('Tipe Pembayaran')
                         ->badge(),
