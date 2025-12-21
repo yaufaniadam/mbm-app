@@ -44,6 +44,7 @@ class RolePermissionSeeder extends Seeder
             'view-national-reports',
             'view-sppg-reports',
             'manage-sppg-finance',
+            'manage-sppg-profile',
             'confirm-kornas-deposit', // Khusus Staf Kornas
         ];
 
@@ -98,7 +99,8 @@ class RolePermissionSeeder extends Seeder
             'manage-sppg-relawan',
             'manage-jadwal-produksi',
             'view-sppg-reports',
-            'manage-sppg-finance'
+            'manage-sppg-finance',
+            'manage-sppg-profile'
         ]);
 
         // PJ Pelaksana
@@ -108,7 +110,11 @@ class RolePermissionSeeder extends Seeder
         $roleModels['Penerima Kuasa']->syncPermissions(['view-sppg-dashboard', 'view-sppg-reports']);
 
         // Staf Administrator SPPG
-        $roleModels['Staf Administrator SPPG']->syncPermissions(['view-sppg-dashboard', 'manage-jadwal-produksi']);
+        $roleModels['Staf Administrator SPPG']->syncPermissions([
+            'view-sppg-dashboard', 
+            'manage-jadwal-produksi',
+            'manage-sppg-profile'
+        ]);
 
         // Staf Gizi
         $roleModels['Staf Gizi']->syncPermissions(['perform-verifikasi-pangan', 'view-sppg-dashboard']);
