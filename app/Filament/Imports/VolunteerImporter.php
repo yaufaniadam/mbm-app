@@ -58,14 +58,8 @@ class VolunteerImporter extends Importer
 
     protected function afterFill(): void
     {
-        // Categorize based on jabatan (posisi)
-        $jabatan = $this->record->posisi ?? '';
-        
-        if (str_contains(strtolower($jabatan), 'koordinator')) {
-            $this->record->category = 'Koordinator';
-        } else {
-            $this->record->category = $jabatan;
-        }
+        // Category = Jabatan (apa adanya)
+        $this->record->category = $this->record->posisi ?? '';
     }
 
     public static function getCompletedNotificationBody(Import $import): string

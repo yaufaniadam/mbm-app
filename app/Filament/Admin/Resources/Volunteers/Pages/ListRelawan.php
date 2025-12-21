@@ -22,7 +22,7 @@ class ListRelawan extends ListRecords
                 ->form([
                     Select::make('sppg_id')
                         ->label('Unit SPPG')
-                        ->options(Sppg::pluck('nama_unit', 'id'))
+                        ->options(Sppg::pluck('nama_sppg', 'id'))
                         ->required()
                         ->searchable()
                         ->helperText('Pilih SPPG tujuan impor relawan'),
