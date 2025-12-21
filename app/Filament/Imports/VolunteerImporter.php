@@ -2,10 +2,12 @@
 
 namespace App\Filament\Imports;
 
+use App\Models\Sppg;
 use App\Models\Volunteer;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
+use Filament\Forms\Components\Select;
 use Illuminate\Support\Number;
 
 class VolunteerImporter extends Importer
@@ -42,6 +44,18 @@ class VolunteerImporter extends Importer
                 ->rules(['max:255']),
             ImportColumn::make('address')
                 ->label('Alamat'),
+        ];
+    }
+
+    public static function getOptionsFormComponents(): array
+    {
+        return [
+            Select::make('sppg_id')
+                ->label('Unit SPPG')
+                ->options(Sppg::pluck('nama_sppg', 'id'))
+                ->required()
+                ->searchable()
+                ->helperText('Pilih SPPG tujuan impor relawan'),
         ];
     }
 
