@@ -15,15 +15,18 @@ class VolunteerImporter extends Importer
     public static function getColumns(): array
     {
         return [
-            ImportColumn::make('sppg')
-                ->label('Unit SPPG')
-                ->relationship()
-                ->requiredMapping(fn ($livewire) => !isset($livewire->options['sppg_id']))
-                ->rules(['required_without_options:sppg_id']),
             ImportColumn::make('nama_relawan')
-                ->label('Nama Relawan')
+                ->label('Nama')
                 ->requiredMapping()
                 ->rules(['required', 'max:255']),
+            ImportColumn::make('posisi')
+                ->label('Jabatan')
+                ->requiredMapping()
+                ->rules(['required', 'max:255']),
+            ImportColumn::make('daily_rate')
+                ->label('Honor')
+                ->requiredMapping()
+                ->rules(['required']),
             ImportColumn::make('nik')
                 ->label('NIK')
                 ->rules(['max:255']),
@@ -32,20 +35,26 @@ class VolunteerImporter extends Importer
                 ->rules(['max:255']),
             ImportColumn::make('address')
                 ->label('Alamat'),
-            ImportColumn::make('posisi')
-                ->label('Posisi / Jabatan')
-                ->rules(['max:255']),
-            ImportColumn::make('category')
-                ->label('Kategori')
-                ->rules(['max:255']),
             ImportColumn::make('kontak')
                 ->label('Kontak / No. HP')
                 ->rules(['max:255']),
-            ImportColumn::make('daily_rate')
-                ->label('Upah Harian')
-                ->numeric()
-                ->rules(['integer']),
         ];
+    }
+
+    public function beforeFill(array $data): array
+    {
+        // Copy Jabatan to category as well
+        if (isset($data['posisi'])) {
+            $data['category'] = $data['posisi'];
+        }
+
+        // Clean Indonesian number format (remove dots as thousand separators, keep as integer)
+        if (isset($data['daily_rate'])) {
+            $cleaned = str_replace(['.', ',', ' '], '', trim($data['daily_rate']));
+            $data['daily_rate'] = (int) $cleaned;
+        }
+
+        return $data;
     }
 
     public function resolveRecord(): Volunteer
