@@ -22,7 +22,13 @@ class User extends Authenticatable implements FilamentUser
     {
         if ($panel->getId() === 'admin') {
             // Only Admin/Management roles access Admin Panel
-            return $this->hasRole(['Super Admin', 'Administrator', 'Lembaga Pengusul', 'Kornas']);
+            return $this->hasRole([
+                'Superadmin', 
+                'Direktur Kornas', 
+                'Staf Kornas', 
+                'Staf Akuntan Kornas', 
+                'Pimpinan Lembaga Pengusul'
+            ]);
         }
 
         if ($panel->getId() === 'sppg') {

@@ -143,11 +143,14 @@ class InvoiceResource extends Resource
             ->recordActions([ // Filament V4 Syntax
                 EditAction::make(),
                 
+                // 1. Verifikasi Pembayaran SPPG (Visible to Admin, Kornas, LP)
                 Action::make('verify')
                     ->label('Verifikasi Lunas')
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
                     ->requiresConfirmation()
+                    // Visible for SPPG_SEWA only. 
+                    // LP verifies SPPG payment. Admin/Kornas can too.
                     ->visible(fn (Invoice $record) => in_array($record->status, ['UNPAID', 'WAITING_VERIFICATION']) && $record->type === 'SPPG_SEWA')
                     ->action(function (Invoice $record) {
                         $record->update([
@@ -175,12 +178,16 @@ class InvoiceResource extends Resource
                             ->send();
                     }),
 
-                 Action::make('verify_royalty')
+                // 2. Verifikasi Pembayaran Royalty (Visible to Admin, Kornas ONLY)
+                Action::make('verify_royalty')
                     ->label('Verifikasi Royalty')
                     ->icon('heroicon-o-check-badge')
                     ->color('primary')
                     ->requiresConfirmation()
-                    ->visible(fn (Invoice $record) => in_array($record->status, ['UNPAID', 'WAITING_VERIFICATION']) && $record->type === 'LP_ROYALTY')
+                    // Hidden from Pimpinan Lembaga Pengusul (Self-verification prevention)
+                    ->visible(fn (Invoice $record) => in_array($record->status, ['UNPAID', 'WAITING_VERIFICATION']) 
+                        && $record->type === 'LP_ROYALTY'
+                        && !auth()->user()->hasRole('Pimpinan Lembaga Pengusul'))
                     ->action(function (Invoice $record) {
                         $record->update([
                             'status' => 'PAID',
@@ -192,6 +199,40 @@ class InvoiceResource extends Resource
                             ->body('Pembayaran Royalty ke Kornas terverifikasi.')
                             ->success()
                             ->send();
+                    }),
+
+                 // 3. Bayar Royalty (Upload Bukti) - Visible to LP
+                 Action::make('pay_royalty')
+                    ->label(fn(Invoice $record) => $record->status === 'WAITING_VERIFICATION' ? 'Sedang Diverifikasi' : 'Bayar Royalty')
+                    ->icon('heroicon-o-credit-card')
+                    ->color('warning')
+                    ->visible(fn (Invoice $record) => in_array($record->status, ['UNPAID', 'REJECTED']) 
+                        && $record->type === 'LP_ROYALTY'
+                        && auth()->user()->hasRole('Pimpinan Lembaga Pengusul'))
+                    ->form([
+                        Section::make('Konfirmasi Transfer Royalty')
+                            ->schema([
+                                Forms\Components\TextInput::make('source_bank')->label('Bank Sumber')->required(),
+                                Forms\Components\TextInput::make('destination_bank')->label('Bank Tujuan (Kornas)')->required(),
+                                Forms\Components\DatePicker::make('transfer_date')->label('Tanggal Transfer')->default(now())->required(),
+                                Forms\Components\FileUpload::make('proof_of_payment')
+                                    ->label('Bukti Transfer')
+                                    ->image()
+                                    ->directory('invoice-proofs')
+                                    ->required(),
+                            ])->columns(2)
+                    ])
+                    ->action(function (Invoice $record, array $data) {
+                        $record->update([
+                            'source_bank' => $data['source_bank'],
+                            'destination_bank' => $data['destination_bank'],
+                            'transfer_date' => $data['transfer_date'],
+                            'proof_of_payment' => $data['proof_of_payment'],
+                            'status' => 'WAITING_VERIFICATION',
+                            'rejection_reason' => null,
+                        ]);
+
+                        Notification::make()->title('Bukti Pembayaran Diupload')->success()->send();
                     }),
                     
                 Action::make('view_proof')
@@ -206,6 +247,26 @@ class InvoiceResource extends Resource
                     DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+        $user = auth()->user();
+
+        if ($user->hasRole('Pimpinan Lembaga Pengusul')) {
+            $lembaga = \App\Models\User::find($user->id)->lembagaDipimpin;
+            if ($lembaga) {
+                // Show Invoices where SPPG ID is in User's Lembaga's SPPGs
+                $sppgIds = $lembaga->sppgs->pluck('id');
+                $query->whereIn('sppg_id', $sppgIds);
+            } else {
+                // Safety fallback
+                $query->whereRaw('1=0');
+            }
+        }
+
+        return $query;
     }
 
     public static function getRelations(): array
