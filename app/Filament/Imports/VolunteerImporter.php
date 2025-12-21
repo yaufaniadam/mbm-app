@@ -15,12 +15,12 @@ class VolunteerImporter extends Importer
     public static function getColumns(): array
     {
         return [
-            ImportColumn::make('nama_relawan')
-                ->label('Nama')
-                ->requiredMapping()
-                ->rules(['required', 'max:255']),
             ImportColumn::make('posisi')
                 ->label('Jabatan')
+                ->requiredMapping()
+                ->rules(['required', 'max:255']),
+            ImportColumn::make('nama_relawan')
+                ->label('Nama')
                 ->requiredMapping()
                 ->rules(['required', 'max:255']),
             ImportColumn::make('daily_rate')
@@ -31,21 +31,28 @@ class VolunteerImporter extends Importer
                 ->label('NIK')
                 ->rules(['max:255']),
             ImportColumn::make('gender')
-                ->label('Jenis Kelamin')
+                ->label('JK')
+                ->rules(['max:255']),
+            ImportColumn::make('kontak')
+                ->label('HP')
                 ->rules(['max:255']),
             ImportColumn::make('address')
                 ->label('Alamat'),
-            ImportColumn::make('kontak')
-                ->label('Kontak / No. HP')
-                ->rules(['max:255']),
         ];
     }
 
     public function beforeFill(array $data): array
     {
-        // Copy Jabatan to category as well
+        // Categorize based on jabatan
         if (isset($data['posisi'])) {
-            $data['category'] = $data['posisi'];
+            $jabatan = trim($data['posisi']);
+            
+            // If jabatan contains "Koordinator", category is "Koordinator"
+            if (str_contains(strtolower($jabatan), 'koordinator')) {
+                $data['category'] = 'Koordinator';
+            } else {
+                $data['category'] = $jabatan;
+            }
         }
 
         // Clean Indonesian number format (remove dots as thousand separators, keep as integer)
