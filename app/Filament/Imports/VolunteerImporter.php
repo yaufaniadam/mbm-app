@@ -26,7 +26,11 @@ class VolunteerImporter extends Importer
             ImportColumn::make('daily_rate')
                 ->label('Honor')
                 ->requiredMapping()
-                ->rules(['required']),
+                ->castStateUsing(function ($state) {
+                    // Clean Indonesian number format (remove dots as thousand separators)
+                    $cleaned = str_replace(['.', ',', ' '], '', trim($state ?? ''));
+                    return (int) $cleaned;
+                }),
             ImportColumn::make('nik')
                 ->label('NIK')
                 ->rules(['max:255']),
@@ -41,29 +45,6 @@ class VolunteerImporter extends Importer
         ];
     }
 
-    public function beforeFill(array $data): array
-    {
-        // Categorize based on jabatan
-        if (isset($data['posisi'])) {
-            $jabatan = trim($data['posisi']);
-            
-            // If jabatan contains "Koordinator", category is "Koordinator"
-            if (str_contains(strtolower($jabatan), 'koordinator')) {
-                $data['category'] = 'Koordinator';
-            } else {
-                $data['category'] = $jabatan;
-            }
-        }
-
-        // Clean Indonesian number format (remove dots as thousand separators, keep as integer)
-        if (isset($data['daily_rate'])) {
-            $cleaned = str_replace(['.', ',', ' '], '', trim($data['daily_rate']));
-            $data['daily_rate'] = (int) $cleaned;
-        }
-
-        return $data;
-    }
-
     public function resolveRecord(): Volunteer
     {
         $volunteer = new Volunteer();
@@ -73,6 +54,18 @@ class VolunteerImporter extends Importer
         }
 
         return $volunteer;
+    }
+
+    protected function afterFill(): void
+    {
+        // Categorize based on jabatan (posisi)
+        $jabatan = $this->record->posisi ?? '';
+        
+        if (str_contains(strtolower($jabatan), 'koordinator')) {
+            $this->record->category = 'Koordinator';
+        } else {
+            $this->record->category = $jabatan;
+        }
     }
 
     public static function getCompletedNotificationBody(Import $import): string
