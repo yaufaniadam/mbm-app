@@ -121,11 +121,25 @@ class ProductionSchedulesTable
                             'notes' => $data['notes'] ?? null,
                         ]);
 
-                        // Update status to indicate evaluation is done
-                        $record->update(['status' => 'Terverifikasi']);
+                        // Update status to indicate evaluation is done, waiting for Head of SPPG approval
+                        $record->update(['status' => 'Menunggu ACC Kepala SPPG']);
 
                         \Filament\Notifications\Notification::make()
                             ->title('Evaluasi Berhasil Disimpan')
+                            ->success()
+                            ->send();
+                    }),
+                \Filament\Actions\Action::make('approve')
+                    ->label('Setujui Rencana')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->visible(fn(ProductionSchedule $record) => \Illuminate\Support\Facades\Auth::user()->hasRole('Kepala SPPG') && $record->status === 'Menunggu ACC Kepala SPPG')
+                    ->action(function (ProductionSchedule $record) {
+                        $record->update(['status' => 'Terverifikasi']);
+
+                        \Filament\Notifications\Notification::make()
+                            ->title('Rencana Distribusi Disetujui')
                             ->success()
                             ->send();
                     }),
