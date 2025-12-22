@@ -38,6 +38,8 @@ class VolunteerImporter extends Importer
                 ->rules(['max:255']),
             ImportColumn::make('gender')
                 ->label('JK')
+                ->requiredMapping()
+                ->rules(['required'])
                 ->castStateUsing(function ($state) {
                     $state = strtolower(trim($state ?? ''));
                     
