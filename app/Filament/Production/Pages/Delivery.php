@@ -196,7 +196,7 @@ class Delivery extends Page implements HasForms
                 'delivered_at' => now(),
             ]);
 
-            if ($this->record->productionSchedule->getIsFullyDeliveredAttribute()) {
+            if ($this->record->productionSchedule->is_fully_delivered) {
                 $this->record->productionSchedule->update([
                     'status' => 'Selesai',
                 ]);
@@ -221,7 +221,7 @@ class Delivery extends Page implements HasForms
             return;
         }
 
-        // dd($production->getIsFullyDeliveredAttribute());
+        // dd($production->is_fully_delivered);
 
         if ($production->status === 'Ditolak') {
             Notification::make()
@@ -276,7 +276,7 @@ class Delivery extends Page implements HasForms
                 'delivered_at' => now(),
             ]);
 
-            if ($production->getIsFullyDeliveredAttribute()) {
+            if ($production->is_fully_delivered) {
                 $production->update([
                     'status' => 'Selesai',
                 ]);
