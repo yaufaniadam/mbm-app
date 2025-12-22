@@ -165,6 +165,6 @@
     </div>
 </x-filament-panels::page>
 
-@push('scripts')
+@assets
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
-@endpush
+@endassets
