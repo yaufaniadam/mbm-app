@@ -9,11 +9,10 @@ class HolidayCalendar extends Page
 {
     protected static string $resource = HolidayResource::class;
 
-    protected static string $view = 'filament.admin.resources.holidays.pages.holiday-calendar';
+    protected string $view = 'filament.admin.resources.holidays.pages.holiday-calendar';
 
     protected static ?string $title = 'Kalender Hari Libur';
 
-    protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
 
     public function getHolidays(): array
     {
