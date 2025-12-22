@@ -40,9 +40,11 @@ class SppgStatsOverview extends StatsOverviewWidget
             $distributions = \App\Models\Distribution::count();
             $productions = \App\Models\ProductionSchedule::count();
             $sppgCount = Sppg::count();
+            $pendingPickups = \App\Models\Distribution::where('pickup_status', '!=', 'Dijemput')->count();
         } else if ($sppg) {
             $distributions = $sppg->distributions()->count();
             $productions = $sppg->productionSchedules()->count();
+            $pendingPickups = $sppg->distributions()->where('pickup_status', '!=', 'Dijemput')->count();
         }
 
         return [
@@ -63,6 +65,10 @@ class SppgStatsOverview extends StatsOverviewWidget
                 ->icon('heroicon-o-home-modern', IconPosition::Before)
                 ->description($isNationalView ? 'Total produksi nasional' : 'produksi selesai')
                 ->color('secondary'),
+            Stat::make('Penjemputan Alat', $pendingPickups ?? 0)
+                ->icon('heroicon-o-arrow-path', IconPosition::Before)
+                ->description('Peralatan belum dijemput')
+                ->color(($pendingPickups ?? 0) > 0 ? 'warning' : 'success'),
         ];
     }
 }

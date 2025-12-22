@@ -61,15 +61,15 @@ class ManageFinance extends Page implements HasForms
              if (request()->query('activeTab') === null) {
                 $this->activeTab = 'verify_rent';
             }
-        } elseif ($user->hasAnyRole(['Kepala SPPG', 'Staf Akuntan'])) {
+        } elseif ($user->hasAnyRole(['Kepala SPPG', 'Staf Akuntan', 'PJ Pelaksana'])) {
              if (request()->query('activeTab') === null) {
-                $this->activeTab = 'dashboard';
+                $this->activeTab = 'buku_kas';
             }
         }
 
         // Fallback
         if (! $this->canViewTab($this->activeTab)) {
-            foreach (['dashboard', 'buku_kas_pusat', 'pay_rent', 'verify_rent', 'pay_royalty', 'verify_royalty', 'transactions'] as $tab) {
+            foreach (['dashboard', 'buku_kas_pusat', 'audit_sppg', 'buku_kas', 'pay_rent', 'verify_rent', 'pay_royalty', 'verify_royalty', 'transactions'] as $tab) {
                 if ($this->canViewTab($tab)) {
                     $this->activeTab = $tab;
                     break;
@@ -91,6 +91,8 @@ class ManageFinance extends Page implements HasForms
             
             // 1. Buku Kas Pusat (Kornas Only)
             'buku_kas_pusat' => $user->hasAnyRole(['Superadmin', 'Staf Kornas', 'Staf Akuntan Kornas', 'Direktur Kornas']),
+            'audit_sppg' => $user->hasAnyRole(['Superadmin', 'Staf Kornas', 'Staf Akuntan Kornas', 'Direktur Kornas']),
+            'buku_kas' => $user->hasAnyRole(['Superadmin', 'Kepala SPPG', 'PJ Pelaksana', 'Staf Akuntan']),
             
             'pay_rent' => $user->hasAnyRole(['Kepala SPPG', 'PJ Pelaksana', 'Staf Akuntan']),
             'verify_rent' => $user->hasAnyRole(['Superadmin', 'Pimpinan Lembaga Pengusul']),

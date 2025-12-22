@@ -187,7 +187,10 @@ class OperatingExpenses extends TableWidget
             ->headerActions([
                 CreateAction::make()
                     ->label('Tambah Pengeluaran')
-                    ->visible(fn () => ! Auth::user()->hasAnyRole(['Staf Kornas', 'Direktur Kornas']))
+                    ->visible(fn () => 
+                        Auth::user()->hasAnyRole(['Kepala SPPG', 'PJ Pelaksana', 'Staf Akuntan', 'Superadmin']) || 
+                        ($this->scope !== 'unit' && ! Auth::user()->hasAnyRole(['Staf Kornas', 'Direktur Kornas']))
+                    )
                     ->modalHeading('Catat Biaya Operasional Baru')
                     ->mutateDataUsing(function (array $data): array {
                         $user = Auth::user();

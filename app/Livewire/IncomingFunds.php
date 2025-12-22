@@ -191,7 +191,10 @@ class IncomingFunds extends TableWidget
             ->headerActions([
                 CreateAction::make()
                     ->label('Tambah Pemasukan')
-                    ->visible(fn () => ! Auth::user()->hasAnyRole(['Direktur Kornas']))
+                    ->visible(fn () => 
+                        Auth::user()->hasAnyRole(['Kepala SPPG', 'PJ Pelaksana', 'Staf Akuntan', 'Superadmin']) || 
+                        ($this->scope !== 'unit' && ! Auth::user()->hasAnyRole(['Direktur Kornas']))
+                    )
                     ->modalHeading('Catat Penerimaan Dana Baru')
                     ->schema($this->getFormSchema())
                     ->using(function (array $data, string $model): SppgIncomingFund {

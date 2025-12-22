@@ -15,11 +15,17 @@
             <x-filament::tabs.item :active="$activeTab === 'buku_kas_pusat'" wire:click="$set('activeTab', 'buku_kas_pusat')" icon="heroicon-o-building-library">
                 Buku Kas Pusat
             </x-filament::tabs.item>
+            <x-filament::tabs.item :active="$activeTab === 'audit_sppg'" wire:click="$set('activeTab', 'audit_sppg')" icon="heroicon-o-magnifying-glass-circle">
+                Monitoring SPPG
+            </x-filament::tabs.item>
         @endif
 
 
         {{-- Tab 2: Bayar Sewa (SPPG Only) --}}
         @if (auth()->user()->hasAnyRole(['Kepala SPPG', 'PJ Pelaksana', 'Staf Akuntan']))
+            <x-filament::tabs.item :active="$activeTab === 'buku_kas'" wire:click="$set('activeTab', 'buku_kas')" icon="heroicon-o-book-open">
+                Buku Kas
+            </x-filament::tabs.item>
             <x-filament::tabs.item :active="$activeTab === 'pay_rent'" wire:click="$set('activeTab', 'pay_rent')" icon="heroicon-o-credit-card">
                 Bayar Sewa
             </x-filament::tabs.item>
@@ -82,6 +88,32 @@
             </div>
         @endif
 
+        @if ($activeTab === 'audit_sppg')
+            <div style="display: flex; flex-direction: column; gap: 2rem;">
+                <x-filament::section>
+                    <x-slot name="heading">Monitoring Keuangan Unit SPPG</x-slot>
+                    <p class="text-sm text-gray-500 mb-4">Pilih unit SPPG untuk memantau detail pemasukan dan pengeluaran harian mereka.</p>
+                </x-filament::section>
+                @livewire(\App\Livewire\OperatingExpenses::class, ['scope' => 'unit'])
+                @livewire(\App\Livewire\IncomingFunds::class, ['scope' => 'unit'])
+            </div>
+        @endif
+
+
+        @if ($activeTab === 'buku_kas')
+            <div style="display: flex; flex-direction: column; gap: 2rem;">
+                <div style="display: flex; gap: 2rem; width: 100%;">
+                    <div style="flex: 1;">
+                        @livewire(\App\Livewire\OperatingExpensesStats::class, ['scope' => 'unit'])
+                    </div>
+                    <div style="flex: 1;">
+                        @livewire(\App\Livewire\SppgFunds::class, ['scope' => 'unit'])
+                    </div>
+                </div>
+                @livewire(\App\Livewire\OperatingExpenses::class, ['scope' => 'unit'])
+                @livewire(\App\Livewire\IncomingFunds::class, ['scope' => 'unit'])
+            </div>
+        @endif
 
         @if ($activeTab === 'pay_rent')
             @livewire(\App\Livewire\BillList::class, ['type' => 'SPPG_SEWA'])
