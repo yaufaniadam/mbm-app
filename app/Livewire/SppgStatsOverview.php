@@ -48,15 +48,6 @@ class SppgStatsOverview extends StatsOverviewWidget
         }
 
         return [
-            $isNationalView
-                ? Stat::make('Total SPPG Terdaftar', $sppgCount ?? 0)
-                    ->icon('heroicon-o-home-modern', IconPosition::Before)
-                    ->description('Seluruh Indonesia')
-                    ->color('primary')
-                : Stat::make('SPPG', $sppg->nama_sppg ?? 'N/A')
-                    ->icon('heroicon-o-home', IconPosition::Before)
-                    ->description($sppg->kepalaSppg->name ?? 'Tidak ada kepala SPPG')
-                    ->color('secondary'),
             Stat::make('Pengantaran', $distributions ?? 0)
                 ->icon('heroicon-o-truck', IconPosition::Before)
                 ->description($isNationalView ? 'Total pengantaran nasional' : 'pengantaran selesai')
