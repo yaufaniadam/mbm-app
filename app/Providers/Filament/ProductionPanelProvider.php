@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Production\Pages\Dashboard;
 use App\Filament\Production\Pages\Delivery;
 use App\Filament\Production\Pages\Distribution;
 use App\Filament\Production\Pages\Verify;
@@ -11,7 +12,6 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -37,24 +37,12 @@ class ProductionPanelProvider extends PanelProvider
             ->login()
             ->discoverResources(in: app_path('Filament/Production/Resources'), for: 'App\Filament\Production\Resources')
             ->discoverPages(in: app_path('Filament/Production/Pages'), for: 'App\Filament\Production\Pages')
-            ->pages(function () {
-                $user = auth()->user();
-                
-                // For Staf Pengantaran, skip Dashboard - go directly to Distribution
-                if ($user && $user->hasRole('Staf Pengantaran')) {
-                    return [
-                        Distribution::class,
-                        Delivery::class,
-                    ];
-                }
-                
-                return [
-                    Dashboard::class,
-                    Verify::class,
-                    Distribution::class,
-                    Delivery::class,
-                ];
-            })
+            ->pages([
+                Dashboard::class,
+                Verify::class,
+                Distribution::class,
+                Delivery::class,
+            ])
             ->discoverWidgets(in: app_path('Filament/Production/Widgets'), for: 'App\Filament\Production\Widgets')
             ->widgets([
                 AccountWidget::class,
