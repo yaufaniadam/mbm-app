@@ -7,7 +7,7 @@ use App\Livewire\ProductionChart;
 use App\Livewire\ProductionDistributionList;
 use App\Livewire\ProductionScheduleList;
 use App\Livewire\SppgStatsOverview;
-use App\Livewire\SppgInfoWidget;
+use App\Livewire\SppgTopStatsWidget;
 use App\Livewire\FinanceStatsOverview;
 use App\Models\Sppg;
 use App\Models\User;
@@ -27,10 +27,7 @@ class Dashboard extends BaseDashboard
 
     public function getColumns(): int|array
     {
-        return [
-            'md' => 3,
-            'lg' => 3,
-        ];
+        return 2;
     }
 
     public function getHeaderWidgetsColumns(): int|array
@@ -54,8 +51,7 @@ class Dashboard extends BaseDashboard
     public function getWidgets(): array
     {
         return [
-            SppgInfoWidget::class,
-            \App\Filament\Sppg\Widgets\IncompletePlanAlert::class,
+            SppgTopStatsWidget::class,
             SppgStatsOverview::class,
             FinanceStatsOverview::class,
             ProductionChart::class,
