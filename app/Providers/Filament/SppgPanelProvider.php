@@ -49,7 +49,7 @@ class SppgPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Sppg/Widgets'), for: 'App\Filament\Sppg\Widgets')
             ->widgets([
                 // AccountWidget::class,
-                AssignedSppg::class,
+                // AssignedSppg::class,
                 // SppgOverview::class,
                 // FilamentInfoWidget::class,
             ])

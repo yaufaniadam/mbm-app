@@ -38,7 +38,7 @@ class SppgInfoWidget extends StatsOverviewWidget
 
         return [
             $isNationalView
-                ? Stat::make('Total SPPG Terdaftar', $sppgCount ?? Sppg::count())
+                ? Stat::make('Total SPPG Terdaftar', Sppg::count())
                     ->icon('heroicon-o-home-modern', IconPosition::Before)
                     ->description('Seluruh Indonesia')
                     ->color('primary')

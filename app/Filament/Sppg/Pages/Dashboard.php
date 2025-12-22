@@ -44,6 +44,7 @@ class Dashboard extends BaseDashboard
     {
         return [
             AccountWidget::class,
+            SppgInfoWidget::class,
             OsmMapWidget::class,
         ];
     }
@@ -51,7 +52,6 @@ class Dashboard extends BaseDashboard
     public function getWidgets(): array
     {
         return [
-            SppgInfoWidget::class,
             \App\Filament\Sppg\Widgets\IncompletePlanAlert::class,
             SppgStatsOverview::class,
             FinanceStatsOverview::class,
