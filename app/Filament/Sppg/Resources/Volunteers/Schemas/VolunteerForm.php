@@ -40,7 +40,44 @@ class VolunteerForm
                                         return \App\Models\User::pluck('name', 'id');
                                     })
                                     ->searchable()
-                                    ->nullable(),
+                                    ->nullable()
+                                    ->createOptionForm([
+                                        TextInput::make('name')
+                                            ->label('Nama Lengkap')
+                                            ->required(),
+                                        TextInput::make('email')
+                                            ->label('Email')
+                                            ->email()
+                                            ->required()
+                                            ->unique('users', 'email'),
+                                        TextInput::make('password')
+                                            ->label('Password')
+                                            ->password()
+                                            ->required()
+                                            ->minLength(6),
+                                    ])
+                                    ->createOptionUsing(function (array $data, $record) {
+                                        $user = \App\Models\User::create([
+                                            'name' => $data['name'],
+                                            'email' => $data['email'],
+                                            'password' => \Illuminate\Support\Facades\Hash::make($data['password']),
+                                        ]);
+                                        
+                                        // Get SPPG ID
+                                        $sppgId = $record?->sppg_id ?? auth()->user()?->unitTugas()->first()?->id;
+                                        
+                                        // Assign to SPPG via pivot
+                                        if ($sppgId) {
+                                            \Illuminate\Support\Facades\DB::table('sppg_user_roles')->insert([
+                                                'user_id' => $user->id,
+                                                'sppg_id' => $sppgId,
+                                                'role_id' => \Spatie\Permission\Models\Role::where('name', 'Staf Pengantaran')->first()?->id,
+                                            ]);
+                                        }
+                                        
+                                        return $user->id;
+                                    })
+                                    ->createOptionActionLabel('Buat User Baru'),
                                 TextInput::make('nama_relawan')
                                     ->label('Nama Lengkap')
                                     ->required(),
