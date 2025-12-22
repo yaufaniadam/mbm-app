@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
             VillagesSeeder::class,
             RolePermissionSeeder::class,
             SppgLegacyImportSeeder::class,
+            PenerimaMbmSeeder::class,
             FinancialCategorySeeder::class,
             ProductionVerificationSettingSeeder::class,
          ]);
