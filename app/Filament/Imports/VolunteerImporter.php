@@ -61,6 +61,16 @@ class VolunteerImporter extends Importer
 
     public static function getOptionsFormComponents(): array
     {
+        // Check if user has an assigned SPPG (SPPG panel user)
+        $user = auth()->user();
+        $userSppgId = $user?->unitTugas()->first()?->id;
+        
+        // If user is from SPPG, don't show dropdown
+        if ($userSppgId) {
+            return [];
+        }
+        
+        // For admin, show SPPG dropdown
         return [
             Select::make('sppg_id')
                 ->label('Unit SPPG')
@@ -75,8 +85,16 @@ class VolunteerImporter extends Importer
     {
         $volunteer = new Volunteer();
 
+        // First check options (from dropdown for admin)
         if (isset($this->options['sppg_id'])) {
             $volunteer->sppg_id = $this->options['sppg_id'];
+        } else {
+            // Auto-assign from user's SPPG (for SPPG panel users)
+            $user = auth()->user();
+            $userSppgId = $user?->unitTugas()->first()?->id;
+            if ($userSppgId) {
+                $volunteer->sppg_id = $userSppgId;
+            }
         }
 
         return $volunteer;
