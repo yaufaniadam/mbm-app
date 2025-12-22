@@ -25,6 +25,11 @@ class Distribution extends Model
         'pickup_notes',
     ];
 
+    protected $casts = [
+        'delivered_at' => 'datetime',
+        'pickup_at' => 'datetime',
+    ];
+
     public function productionSchedule()
     {
         return $this->belongsTo(ProductionSchedule::class, 'jadwal_produksi_id', 'id');
