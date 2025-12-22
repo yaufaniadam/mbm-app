@@ -14,7 +14,10 @@ class SppgInfoWidget extends StatsOverviewWidget
 {
     use InteractsWithPageFilters;
 
-    protected int|string|array $columnSpan = 2;
+    protected int|string|array $columnSpan = [
+        'md' => 2,
+        'lg' => 2,
+    ];
 
     protected function getStats(): array
     {
