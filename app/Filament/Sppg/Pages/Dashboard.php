@@ -27,7 +27,7 @@ class Dashboard extends BaseDashboard
 
     public function getColumns(): int|array
     {
-        return 2;
+        return 3;
     }
 
     public function getHeaderWidgetsColumns(): int|array
