@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 class IncompletePlanAlert extends StatsOverviewWidget
 {
     // Ensure widget spans full width
-    protected int | string | array $columnSpan = 'full';
+    protected int | string | array $columnSpan = 1;
 
     protected function getStats(): array
     {
