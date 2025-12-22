@@ -21,13 +21,20 @@ class VolunteerForm
                                     ->label('Akun Pengguna Sistem')
                                     ->helperText('Hubungkan jika relawan butuh akses aplikasi (misal: Kurir)')
                                     ->options(function ($record) {
-                                        // Get current user's SPPG ID
-                                        $sppgId = $record?->sppg_id ?? auth()->user()?->sppg_id;
+                                        // Get SPPG ID from record or current authenticated user
+                                        $sppgId = $record?->sppg_id;
+                                        
+                                        if (!$sppgId) {
+                                            // Try to get from authenticated user's unitTugas
+                                            $user = auth()->user();
+                                            $sppgId = $user?->unitTugas()->first()?->id;
+                                        }
                                         
                                         if ($sppgId) {
-                                            // Only show users belonging to this SPPG
-                                            return \App\Models\User::where('sppg_id', $sppgId)
-                                                ->pluck('name', 'id');
+                                            // Get users from sppg_user_roles pivot table
+                                            return \App\Models\User::whereHas('unitTugas', function ($query) use ($sppgId) {
+                                                $query->where('sppg_id', $sppgId);
+                                            })->pluck('name', 'id');
                                         }
                                         
                                         return \App\Models\User::pluck('name', 'id');
