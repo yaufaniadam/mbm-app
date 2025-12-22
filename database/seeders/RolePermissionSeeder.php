@@ -147,7 +147,14 @@ class RolePermissionSeeder extends Seeder
         $roleModels['Staf Gizi']->syncPermissions(['perform-verifikasi-pangan', 'view-sppg-dashboard']);
 
         // Staf Akuntan
-        $roleModels['Staf Akuntan']->syncPermissions(['view-sppg-reports', 'manage-sppg-finance', 'view-sppg-dashboard']);
+        $roleModels['Staf Akuntan']->syncPermissions([
+            'view-sppg-reports',
+            'manage-sppg-finance',
+            'view-sppg-dashboard',
+            // Production Schedule (view only)
+            'ViewAny:ProductionSchedule',
+            'View:ProductionSchedule',
+        ]);
 
         // Staf Akuntan Kornas (NEW)
         $roleModels['Staf Akuntan Kornas']->syncPermissions([
