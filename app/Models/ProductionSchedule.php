@@ -54,7 +54,7 @@ class ProductionSchedule extends Model
     /**
      * Check if all related distributions have the status 'Terkirim'.
      */
-    protected function isFullyDelivered(): \Illuminate\Database\Eloquent\Casts\Attribute
+    public function isFullyDelivered(): \Illuminate\Database\Eloquent\Casts\Attribute
     {
         return \Illuminate\Database\Eloquent\Casts\Attribute::make(
             get: function () {
