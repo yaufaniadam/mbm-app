@@ -73,13 +73,18 @@ class VolunteerForm
                                         // Get SPPG ID
                                         $sppgId = $record?->sppg_id ?? auth()->user()?->unitTugas()->first()?->id;
                                         
-                                        // Assign to SPPG via pivot
-                                        if ($sppgId) {
-                                            \Illuminate\Support\Facades\DB::table('sppg_user_roles')->insert([
-                                                'user_id' => $user->id,
-                                                'sppg_id' => $sppgId,
-                                                'role_id' => \Spatie\Permission\Models\Role::where('name', 'Staf Pengantaran')->first()?->id,
-                                            ]);
+                                        // Assign role via Spatie (for Spatie permissions)
+                                        $role = \Spatie\Permission\Models\Role::where('name', 'Staf Pengantaran')->first();
+                                        if ($role) {
+                                            $user->assignRole($role);
+                                        }
+                                        
+                                        // Also assign to SPPG via pivot table
+                                        if ($sppgId && $role) {
+                                            \Illuminate\Support\Facades\DB::table('sppg_user_roles')->updateOrInsert(
+                                                ['user_id' => $user->id, 'sppg_id' => $sppgId],
+                                                ['role_id' => $role->id]
+                                            );
                                         }
                                         
                                         return $user->id;
