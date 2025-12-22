@@ -79,15 +79,15 @@ class ProductionSchedulesTable
                             $label = $item['item_name'] ?? 'Kriteria';
                             $key = \Illuminate\Support\Str::slug($label); 
 
-                            $schema[] = \Filament\Forms\Components\Select::make("checklist_results.{$key}")
+                            $schema[] = \Filament\Forms\Components\Radio::make("checklist_results.{$key}")
                                 ->label($label)
                                 ->options([
-                                    'Sesuai' => 'Sesuai',
-                                    'Tidak Sesuai' => 'Tidak Sesuai',
-                                    'Perlu Perbaikan' => 'Perlu Perbaikan'
+                                    'Sesuai' => '✅ Sesuai',
+                                    'Tidak Sesuai' => '❌ Tidak Sesuai',
+                                    'Perlu Perbaikan' => '⚠️ Perlu Perbaikan'
                                 ])
                                 ->required()
-                                ->native(false);
+                                ->inline();
                         }
                         
                         $schema[] = \Filament\Forms\Components\Textarea::make('notes')
