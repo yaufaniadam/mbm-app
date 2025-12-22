@@ -46,21 +46,28 @@ class GenerateInvoices extends Command
         
         // Loop to generate multiple invoices if missed (e.g., cron didn't run for a month, or creating catch-up invoices)
         while (true) {
-            // End date is 9 days after start date (inclusive = 10 days)
-            $endDate = (clone $startDate)->addDays(9);
+            // Find the 10th production schedule after startDate
+            $schedules = \App\Models\ProductionSchedule::where('sppg_id', $sppg->id)
+                ->where('tanggal', '>=', $startDate)
+                ->whereIn('status', ['Selesai', 'Didistribusikan', 'Terverifikasi'])
+                ->orderBy('tanggal', 'asc')
+                ->limit(10)
+                ->get();
 
-            // If the 10-day period is not yet complete (endDate is in the future), stop.
-            // We only bill COMPLETED periods or periods ending TODAY.
-            if ($endDate->isFuture()) {
+            // If we don't have enough active days for a full period (10 days), stop and wait.
+            if ($schedules->count() < 10) {
                 break;
             }
+
+            // End date is the date of the 10th active distribution
+            $endDate = $schedules->last()->tanggal;
 
             // Generate Invoice
             $this->createInvoice($sppg, $startDate, $endDate);
             $count++;
 
-            // Move start date to next day for next iteration (catch-up logic)
-            $startDate = $endDate->addDay();
+            // Move start date to next day after the end of this period
+            $startDate = (clone $endDate)->addDay();
         }
     }
 

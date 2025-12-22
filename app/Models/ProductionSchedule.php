@@ -16,6 +16,10 @@ class ProductionSchedule extends Model
         'status',
     ];
 
+    protected $casts = [
+        'tanggal' => 'date',
+    ];
+
     public function sppg()
     {
         return $this->belongsTo(Sppg::class);
