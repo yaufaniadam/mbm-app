@@ -127,6 +127,8 @@ function initHolidayCalendar() {
     const calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
         locale: 'id',
+        selectable: true,
+        navLinks: true,
         headerToolbar: {
             left: 'prev,next today',
             center: 'title',
@@ -136,6 +138,11 @@ function initHolidayCalendar() {
         dateClick: function(info) {
             window.dispatchEvent(new CustomEvent('open-holiday-modal', { 
                 detail: { date: info.dateStr } 
+            }));
+        },
+        select: function(info) {
+            window.dispatchEvent(new CustomEvent('open-holiday-modal', { 
+                detail: { date: info.startStr } 
             }));
         },
         eventClick: function(info) {
