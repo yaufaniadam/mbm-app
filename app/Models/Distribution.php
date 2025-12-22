@@ -18,6 +18,11 @@ class Distribution extends Model
         'delivered_at',
         'photo_of_proof',
         'notes',
+        // Pickup columns
+        'pickup_status',
+        'pickup_at',
+        'pickup_photo_proof',
+        'pickup_notes',
     ];
 
     public function productionSchedule()
