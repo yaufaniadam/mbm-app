@@ -84,8 +84,7 @@ class HolidayResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\HolidayCalendar::route('/'),
-            'list' => Pages\ListHolidays::route('/list'),
+            'index' => Pages\ListHolidays::route('/'),
             'create' => Pages\CreateHoliday::route('/create'),
             'edit' => Pages\EditHoliday::route('/{record}/edit'),
         ];
