@@ -37,12 +37,24 @@ class ProductionPanelProvider extends PanelProvider
             ->login()
             ->discoverResources(in: app_path('Filament/Production/Resources'), for: 'App\Filament\Production\Resources')
             ->discoverPages(in: app_path('Filament/Production/Pages'), for: 'App\Filament\Production\Pages')
-            ->pages([
-                Dashboard::class,
-                Verify::class,
-                Distribution::class,
-                Delivery::class,
-            ])
+            ->pages(function () {
+                $user = auth()->user();
+                
+                // For Staf Pengantaran, skip Dashboard - go directly to Distribution
+                if ($user && $user->hasRole('Staf Pengantaran')) {
+                    return [
+                        Distribution::class,
+                        Delivery::class,
+                    ];
+                }
+                
+                return [
+                    Dashboard::class,
+                    Verify::class,
+                    Distribution::class,
+                    Delivery::class,
+                ];
+            })
             ->discoverWidgets(in: app_path('Filament/Production/Widgets'), for: 'App\Filament\Production\Widgets')
             ->widgets([
                 AccountWidget::class,
