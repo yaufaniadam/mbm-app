@@ -20,7 +20,18 @@ class VolunteerForm
                                 \Filament\Forms\Components\Select::make('user_id')
                                     ->label('Akun Pengguna Sistem')
                                     ->helperText('Hubungkan jika relawan butuh akses aplikasi (misal: Kurir)')
-                                    ->options(\App\Models\User::pluck('name', 'id'))
+                                    ->options(function ($record) {
+                                        // Get current user's SPPG ID
+                                        $sppgId = $record?->sppg_id ?? auth()->user()?->sppg_id;
+                                        
+                                        if ($sppgId) {
+                                            // Only show users belonging to this SPPG
+                                            return \App\Models\User::where('sppg_id', $sppgId)
+                                                ->pluck('name', 'id');
+                                        }
+                                        
+                                        return \App\Models\User::pluck('name', 'id');
+                                    })
                                     ->searchable()
                                     ->nullable(),
                                 TextInput::make('nama_relawan')
