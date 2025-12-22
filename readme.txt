@@ -59,13 +59,6 @@ php artisan queue:work                    # Worker terus jalan
 - Hari aktif = record production_schedules dengan status Selesai/Didistribusikan/Terverifikasi
 
 
-## User Default
-
-| Email              | Password  | Role        |
-|--------------------|-----------|-------------|
-| superadmin@mbm.com | superadmin| Superadmin  |
-
-
 ## Panel URLs
 - Admin Panel: `/admin`
 - SPPG Panel: `/sppg`
