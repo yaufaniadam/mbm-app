@@ -22,13 +22,11 @@ class ListHolidays extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
-            
-            // Multi-day action - for adding date ranges
-            Action::make('addMultipleDays')
-                ->label('Tambah Rentang Tanggal')
-                ->icon('heroicon-o-calendar-days')
-                ->color('info')
+            // Smart multi-day action - single day if end date empty/same
+            Action::make('addHolidays')
+                ->label('Tambah Hari Libur')
+                ->icon('heroicon-o-plus')
+                ->color('primary')
                 ->form([
                     TextInput::make('nama')
                         ->label('Nama Hari Libur')
@@ -38,13 +36,16 @@ class ListHolidays extends ListRecords
                         ->label('Tanggal Mulai')
                         ->required(),
                     DatePicker::make('tanggal_selesai')
-                        ->label('Tanggal Selesai')
-                        ->required()
+                        ->label('Tanggal Selesai (opsional)')
+                        ->helperText('Kosongkan jika hanya 1 hari')
                         ->afterOrEqual('tanggal_mulai'),
                 ])
                 ->action(function (array $data) {
                     $start = Carbon::parse($data['tanggal_mulai']);
-                    $end = Carbon::parse($data['tanggal_selesai']);
+                    // If end date empty or null, use start date (single day)
+                    $end = !empty($data['tanggal_selesai']) 
+                        ? Carbon::parse($data['tanggal_selesai']) 
+                        : $start;
                     $period = CarbonPeriod::create($start, $end);
                     
                     $created = 0;
