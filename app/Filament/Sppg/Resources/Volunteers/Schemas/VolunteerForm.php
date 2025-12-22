@@ -76,8 +76,7 @@ class VolunteerForm
                                         }
                                         
                                         return $user->id;
-                                    })
-                                    ->createOptionActionLabel('Buat User Baru'),
+                                    }),
                                 TextInput::make('nama_relawan')
                                     ->label('Nama Lengkap')
                                     ->required(),
