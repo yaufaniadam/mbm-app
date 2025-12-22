@@ -38,7 +38,19 @@ class VolunteerImporter extends Importer
                 ->rules(['max:255']),
             ImportColumn::make('gender')
                 ->label('JK')
-                ->rules(['max:255']),
+                ->castStateUsing(function ($state) {
+                    $state = strtolower(trim($state ?? ''));
+                    
+                    // Normalize various formats to L/P
+                    if (in_array($state, ['l', 'laki-laki', 'laki', 'male', 'm', 'pria'])) {
+                        return 'L';
+                    }
+                    if (in_array($state, ['p', 'perempuan', 'female', 'f', 'wanita', 'pr'])) {
+                        return 'P';
+                    }
+                    
+                    return null;
+                }),
             ImportColumn::make('kontak')
                 ->label('HP')
                 ->rules(['max:255']),
