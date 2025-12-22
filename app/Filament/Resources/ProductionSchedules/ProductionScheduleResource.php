@@ -130,6 +130,24 @@ class ProductionScheduleResource extends Resource
                             'Menunggu' => 'warning',
                             'Sedang Dikirim' => 'info',
                             'Terkirim' => 'success',
+                            'Selesai' => 'success',
+                            default => 'gray',
+                        })
+                        ->columnSpanFull(),
+                    TextEntry::make('pickup_status_for_' . $school->id)
+                        ->label('Status Penjemputan Alat')
+                        ->state(function (ProductionSchedule $record) use ($school) {
+                            $distribution = $record->distributions()
+                                ->where('sekolah_id', $school->id)
+                                ->first();
+
+                            return $distribution ? $distribution->pickup_status : null;
+                        })
+                        ->badge()
+                        ->color(fn(?string $state): string => match ($state) {
+                            'Menunggu' => 'warning',
+                            'Sedang Dijemput' => 'info',
+                            'Dijemput' => 'success',
                             default => 'gray',
                         })
                         ->columnSpanFull(),
@@ -164,6 +182,23 @@ class ProductionScheduleResource extends Resource
                                 ->where('sekolah_id', $school->id)
                                 ->first();
                             return $distribution->photo_of_proof;
+                        }),
+                    ImageEntry::make('pickup_photo_proof_for_' . $school->id)
+                        ->label('Foto Bukti Penjemputan')
+                        ->columnSpanFull()
+                        ->imageHeight('300px')
+                        ->imageWidth('100%')
+                        ->visible(function (ProductionSchedule $record) use ($school) {
+                            $distribution = $record->distributions()
+                                ->where('sekolah_id', $school->id)
+                                ->first();
+                            return $distribution && $distribution->pickup_status == 'Dijemput';
+                        })
+                        ->state(function (ProductionSchedule $record) use ($school) {
+                            $distribution = $record->distributions()
+                                ->where('sekolah_id', $school->id)
+                                ->first();
+                            return $distribution?->pickup_photo_proof;
                         }),
 
                     Action::make('view_full_image_for_' . $school->id)
