@@ -205,6 +205,12 @@ class ProductionScheduleResource extends Resource
                         ->label('Lihat Gambar Penuh')
                         ->icon('heroicon-m-magnifying-glass-plus')
                         ->color('gray')
+                        ->visible(function (ProductionSchedule $record) use ($school) {
+                            $distribution = $record->distributions()
+                                ->where('sekolah_id', $school->id)
+                                ->first();
+                            return $distribution && !empty($distribution->photo_of_proof);
+                        })
                         ->modalWidth('7xl') // Ukuran modal sangat besar (7xl)
                         ->modalHeading('Bukti Pengantaran - Tampilan Penuh')
                         ->modalSubmitAction(false) // Hilangkan tombol submit

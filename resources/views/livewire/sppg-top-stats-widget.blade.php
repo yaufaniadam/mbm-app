@@ -15,10 +15,10 @@
                     </div>
 
                     <div class="fi-wi-stats-overview-stat-value text-3xl font-semibold tracking-tight text-gray-950 dark:text-white">
-                        {{ $isNationalView ? 'Agregat Nasional' : ($sppg->nama_sppg ?? 'N/A') }}
+                        {{ $isNationalView ? 'Agregat Nasional' : ($sppg?->nama_sppg ?? 'N/A') }}
                     </div>
 
-                    @if(!$isNationalView && isset($sppg->kepalaSppg))
+                    @if(!$isNationalView && isset($sppg?->kepalaSppg))
                         <div class="fi-wi-stats-overview-stat-description text-sm text-gray-500 dark:text-gray-400">
                             {{ $sppg->kepalaSppg->name }}
                         </div>

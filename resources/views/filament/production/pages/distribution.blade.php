@@ -97,7 +97,7 @@
         <div>
             <div class="mb-2 bg-slate-800 p-4 rounded-lg">
                 <p class="text-lg">
-                    Daftar sekolah penerima :
+                Daftar penerima MBM :
                 </p>
             </div>
             <ul>

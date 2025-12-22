@@ -11,9 +11,9 @@ class SchoolsRelationManager extends RelationManager
 {
     protected static string $relationship = 'schools';
 
-    protected static ?string $title = 'Daftar Sekolah Penerima';
+    protected static ?string $title = 'Daftar Penerima MBM';
 
-    protected static ?string $modelLabel = 'Sekolah';
+    protected static ?string $modelLabel = 'Penerima MBM';
 
     public function form(Schema $schema): Schema
     {
@@ -29,7 +29,7 @@ class SchoolsRelationManager extends RelationManager
             ->recordTitleAttribute('nama_sekolah')
             ->columns([
                 Tables\Columns\TextColumn::make('nama_sekolah')
-                    ->label('Nama Sekolah')
+                    ->label('Nama Penerima')
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('alamat')

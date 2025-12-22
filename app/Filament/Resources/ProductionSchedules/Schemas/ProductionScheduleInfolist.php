@@ -59,43 +59,8 @@ class ProductionScheduleInfolist
                     ])
                     ->collapsible(),
 
-                Section::make('Status Distribusi')
-                    ->icon('heroicon-m-truck')
-                    ->schema([
-                        \Filament\Infolists\Components\RepeatableEntry::make('distributions')
-                            ->label('')
-                            ->schema([
-                                Grid::make(4)
-                                    ->schema([
-                                        TextEntry::make('school.nama_sekolah')
-                                            ->label('Sekolah'),
-                                        TextEntry::make('status_pengantaran')
-                                            ->label('Pengantaran')
-                                            ->badge()
-                                            ->color(fn($state) => match ($state) {
-                                                'Menunggu' => 'gray',
-                                                'Sedang Dikirim' => 'warning',
-                                                'Terkirim' => 'success',
-                                                'Selesai' => 'success',
-                                                default => 'gray',
-                                            }),
-                                        TextEntry::make('pickup_status')
-                                            ->label('Penjemputan Alat')
-                                            ->badge()
-                                            ->color(fn($state) => match ($state) {
-                                                'Menunggu' => 'warning',
-                                                'Sedang Dijemput' => 'info',
-                                                'Dijemput' => 'success',
-                                                default => 'gray',
-                                            }),
-                                        TextEntry::make('courier.name')
-                                            ->label('Kurir')
-                                            ->placeholder('-'),
-                                    ]),
-                            ])
-                            ->columnSpanFull(),
-                    ])
-                    ->collapsible(),
+                // Section 'Status Distribusi' removed to avoid redundancy
+
             ])
             ->columns(1);
     }

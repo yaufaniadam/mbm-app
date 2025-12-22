@@ -286,8 +286,25 @@ class VerifyPaymentList extends TableWidget
                                                     ]);
                                                 }
 
-                                                // 3. Generate Royalty Invoice if it's an SPPG_SEWA payment
+                                                // 3. SPPG_SEWA Logic
                                                 if ($record->type === 'SPPG_SEWA') {
+                                                    // A. Cek/Create Category "Biaya Sewa" if not exists
+                                                    $sewaCategory = \App\Models\OperatingExpenseCategory::firstOrCreate(
+                                                        ['name' => 'Biaya Sewa'],
+                                                        ['name' => 'Biaya Sewa']
+                                                    );
+
+                                                    // B. Record Expense automatically for SPPG Unit
+                                                    \App\Models\OperatingExpense::create([
+                                                        'sppg_id' => $record->sppg_id,
+                                                        'name' => "Pembayaran Sewa #{$record->invoice_number}",
+                                                        'amount' => $record->amount,
+                                                        'date' => $record->transfer_date ?? now(),
+                                                        'category_id' => $sewaCategory->id,
+                                                        'attachment' => $record->proof_of_payment,
+                                                    ]);
+
+                                                    // C. Generate Royalty Invoice (10%)
                                                     $royaltyAmount = $record->amount * 0.10; // 10%
 
                                                     Invoice::create([
@@ -303,8 +320,8 @@ class VerifyPaymentList extends TableWidget
                                                 }
                                             });
 
-                                            $message = $record->type === 'SPPG_SEWA' 
-                                                ? 'Pembayaran Diverifikasi, Pemasukan Tercatat, & Tagihan Royalty Diterbitkan.'
+                                            $message = $record->type === 'SPPG_SEWA'
+                                                ? 'Pembayaran Diverifikasi, Pengeluaran SPPG Tercatat & Tagihan Royalty Diterbitkan.'
                                                 : 'Pembayaran Royalty Diverifikasi & Tercatat sebagai Pemasukan.';
 
                                             Notification::make()->title($message)->success()->send();

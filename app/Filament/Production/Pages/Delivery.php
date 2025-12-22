@@ -97,12 +97,12 @@ class Delivery extends Page implements HasForms
                         ->state(fn() => $this->record->jumlah_porsi_kecil),
                 ]),
             Section::make('address_info')
-                ->heading('Alamat Tujuan')
+                ->heading('Alamat Penerima MBM')
                 ->icon('heroicon-m-home-modern')
                 ->columns(2)
                 ->schema([
                     TextEntry::make('school.nama_sekolah')
-                        ->label('Nama Sekolah')
+                        ->label('Nama Penerima')
                         ->state(fn() => $this->record->school->nama_sekolah ?? '-')
                         ->columnSpanFull(),
                     TextEntry::make('school.alamat')

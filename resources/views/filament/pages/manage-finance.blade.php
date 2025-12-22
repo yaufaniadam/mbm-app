@@ -104,14 +104,14 @@
             <div style="display: flex; flex-direction: column; gap: 2rem;">
                 <div style="display: flex; gap: 2rem; width: 100%;">
                     <div style="flex: 1;">
-                        @livewire(\App\Livewire\OperatingExpensesStats::class, ['scope' => 'unit'])
+                        @livewire(\App\Livewire\OperatingExpensesStats::class)
                     </div>
                     <div style="flex: 1;">
-                        @livewire(\App\Livewire\SppgFunds::class, ['scope' => 'unit'])
+                        @livewire(\App\Livewire\SppgFunds::class)
                     </div>
                 </div>
-                @livewire(\App\Livewire\OperatingExpenses::class, ['scope' => 'unit'])
-                @livewire(\App\Livewire\IncomingFunds::class, ['scope' => 'unit'])
+                @livewire(\App\Livewire\OperatingExpenses::class)
+                @livewire(\App\Livewire\IncomingFunds::class)
             </div>
         @endif
 

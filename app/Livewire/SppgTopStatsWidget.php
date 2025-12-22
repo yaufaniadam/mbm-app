@@ -14,28 +14,38 @@ class SppgTopStatsWidget extends Widget
 {
     use InteractsWithPageFilters;
 
-    protected static string $view = 'livewire.sppg-top-stats-widget';
+    protected string $view = 'livewire.sppg-top-stats-widget';
 
     protected int|string|array $columnSpan = 'full';
 
-    public $sppg;
-    public $isNationalView = false;
-    public $pendingCount = 0;
 
     public function getData()
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
-        if (!$user) return;
+        if (!$user) return [
+            'sppg' => null,
+            'isNationalView' => true,
+            'pendingCount' => 0,
+        ];
 
         $sppg = null;
         $isNationalView = false;
 
+        // 1. Check for SPPG Head role
         if ($user->hasRole('Kepala SPPG')) {
-            $sppg = User::find($user->id)->sppgDikepalai;
-        } elseif ($user->hasAnyRole(['PJ Pelaksana', 'Ahli Gizi', 'Staf Administrator SPPG', 'Staf Akuntan', 'Staf Gizi', 'Staf Pengantaran'])) {
-            $sppg = User::find($user->id)->unitTugas->first();
-        } else {
+            $sppg = Sppg::where('kepala_sppg_id', $user->id)->first();
+        } 
+        
+        // 2. Check for Staff Roles
+        if (!$sppg && $user->hasAnyRole(['PJ Pelaksana', 'Ahli Gizi', 'Staf Administrator SPPG', 'Staf Akuntan', 'Staf Gizi', 'Staf Pengantaran'])) {
+            $sppg = Sppg::whereHas('staff', function($query) use ($user) {
+                $query->where('users.id', $user->id);
+            })->first();
+        }
+
+        // 3. Fallback to filters for Management Roles
+        if (!$sppg) {
             $sppgId = $this->pageFilters['sppg_id'] ?? null;
             if ($sppgId) {
                 $sppg = Sppg::find($sppgId);
@@ -44,6 +54,7 @@ class SppgTopStatsWidget extends Widget
             }
         }
 
+        // 4. Calculate pending count
         $pendingCount = 0;
         if ($sppg) {
             $pendingCount = ProductionSchedule::where('sppg_id', $sppg->id)

@@ -31,10 +31,13 @@ class ProductionPanelProvider extends PanelProvider
         return $panel
             ->id('production')
             ->path('production')
+            ->brandLogo(asset('logombm-small.png'))
+            ->darkModeBrandLogo(asset('logombm-w.png'))
+            ->brandLogoHeight('3rem')
             ->colors([
                 'primary' => Color::Amber,
             ])
-            ->login()
+            ->login(\App\Filament\Pages\Auth\CustomLogin::class)
             ->discoverResources(in: app_path('Filament/Production/Resources'), for: 'App\Filament\Production\Resources')
             ->discoverPages(in: app_path('Filament/Production/Pages'), for: 'App\Filament\Production\Pages')
             ->pages([
