@@ -41,21 +41,27 @@ class VolunteerForm
                                     })
                                     ->searchable()
                                     ->nullable()
-                                    ->createOptionForm([
-                                        TextInput::make('name')
-                                            ->label('Nama Lengkap')
-                                            ->required(),
-                                        TextInput::make('email')
-                                            ->label('Email')
-                                            ->email()
-                                            ->required()
-                                            ->unique('users', 'email'),
-                                        TextInput::make('password')
-                                            ->label('Password')
-                                            ->password()
-                                            ->required()
-                                            ->minLength(6),
-                                    ])
+                                    ->createOptionForm(function ($component) {
+                                        // Get nama_relawan from parent form state
+                                        $namaRelawan = $component->getLivewire()->data['nama_relawan'] ?? '';
+                                        
+                                        return [
+                                            TextInput::make('name')
+                                                ->label('Nama Lengkap')
+                                                ->required()
+                                                ->default($namaRelawan),
+                                            TextInput::make('email')
+                                                ->label('Email')
+                                                ->email()
+                                                ->required()
+                                                ->unique('users', 'email'),
+                                            TextInput::make('password')
+                                                ->label('Password')
+                                                ->password()
+                                                ->required()
+                                                ->minLength(6),
+                                        ];
+                                    })
                                     ->createOptionUsing(function (array $data, $record) {
                                         $user = \App\Models\User::create([
                                             'name' => $data['name'],
