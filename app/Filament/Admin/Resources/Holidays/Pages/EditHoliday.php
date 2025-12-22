@@ -8,4 +8,9 @@ use Filament\Resources\Pages\EditRecord;
 class EditHoliday extends EditRecord
 {
     protected static string $resource = HolidayResource::class;
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 }
