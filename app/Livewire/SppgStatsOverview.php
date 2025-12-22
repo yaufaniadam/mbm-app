@@ -37,14 +37,28 @@ class SppgStatsOverview extends StatsOverviewWidget
         }
 
         if ($isNationalView) {
-            $distributions = \App\Models\Distribution::count();
-            $productions = \App\Models\ProductionSchedule::count();
+            $distributions = \App\Models\Distribution::where('status_pengantaran', 'Terkirim')->count();
+            $productions = \App\Models\ProductionSchedule::where('status', 'Selesai')->count();
             $sppgCount = Sppg::count();
-            $pendingPickups = \App\Models\Distribution::where('pickup_status', '!=', 'Dijemput')->count();
+            // Hanya hitung yang sudah terkirim tapi belum dijemput
+            $pendingPickups = \App\Models\Distribution::where('status_pengantaran', 'Terkirim')
+                ->where(function($query) {
+                    $query->where('pickup_status', '!=', 'Dijemput')
+                          ->orWhereNull('pickup_status');
+                })
+                ->count();
         } else if ($sppg) {
-            $distributions = $sppg->distributions()->count();
-            $productions = $sppg->productionSchedules()->count();
-            $pendingPickups = $sppg->distributions()->where('pickup_status', '!=', 'Dijemput')->count();
+            // Hanya hitung untuk SPPG bersangkutan dengan status selesai
+            $distributions = $sppg->distributions()->where('status_pengantaran', 'Terkirim')->count();
+            $productions = $sppg->productionSchedules()->where('status', 'Selesai')->count();
+            // Hanya hitung yang sudah terkirim tapi belum dijemput
+            $pendingPickups = $sppg->distributions()
+                ->where('status_pengantaran', 'Terkirim')
+                ->where(function($query) {
+                    $query->where('pickup_status', '!=', 'Dijemput')
+                          ->orWhereNull('pickup_status');
+                })
+                ->count();
         }
 
         return [

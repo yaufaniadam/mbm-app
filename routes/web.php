@@ -30,7 +30,7 @@ Route::get('/tim', function () {
     return view('public.team');
 })->name('team.public');
 
-Route::get('/sppg', function () {
+Route::get('/daftar-sppg', function () {
     $sppgs = \App\Models\Sppg::where('is_active', true)->paginate(15);
     return view('sppg.index', compact('sppgs'));
 })->name('sppg.public.index');

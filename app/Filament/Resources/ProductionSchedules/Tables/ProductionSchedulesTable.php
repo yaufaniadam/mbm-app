@@ -9,7 +9,10 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class ProductionSchedulesTable
 {
@@ -59,7 +62,70 @@ class ProductionSchedulesTable
                 TextColumn::make('menu_hari_ini')->label('Menu')->sortable()->searchable(),
             ])
             ->filters([
-                //
+                SelectFilter::make('status')
+                    ->label('Status')
+                    ->options([
+                        'Direncanakan' => 'Direncanakan',
+                        'Menunggu ACC Kepala SPPG' => 'Menunggu ACC Kepala SPPG',
+                        'Terverifikasi' => 'Terverifikasi',
+                        'Didistribusikan' => 'Didistribusikan',
+                        'Selesai' => 'Selesai',
+                    ])
+                    ->multiple()
+                    ->searchable(),
+                
+                SelectFilter::make('sppg_id')
+                    ->label('SPPG')
+                    ->relationship('sppg', 'nama_sppg')
+                    ->searchable()
+                    ->preload()
+                    ->multiple(),
+                
+                Filter::make('tanggal')
+                    ->form([
+                        \Filament\Forms\Components\DatePicker::make('tanggal_single')
+                            ->label('Tanggal'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['tanggal_single'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('tanggal', '=', $date),
+                            );
+                    })
+                    ->indicateUsing(function (array $data): ?string {
+                        if (!$data['tanggal_single']) {
+                            return null;
+                        }
+                        return 'Tanggal: ' . \Carbon\Carbon::parse($data['tanggal_single'])->format('d/m/Y');
+                    }),
+                
+                Filter::make('tanggal_range')
+                    ->form([
+                        \Filament\Forms\Components\DatePicker::make('dari_tanggal')
+                            ->label('Dari Tanggal'),
+                        \Filament\Forms\Components\DatePicker::make('sampai_tanggal')
+                            ->label('Sampai Tanggal'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['dari_tanggal'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('tanggal', '>=', $date),
+                            )
+                            ->when(
+                                $data['sampai_tanggal'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('tanggal', '<=', $date),
+                            );
+                    })
+                    ->indicateUsing(function (array $data): ?string {
+                        if (!$data['dari_tanggal'] && !$data['sampai_tanggal']) {
+                            return null;
+                        }
+                        $from = $data['dari_tanggal'] ? \Carbon\Carbon::parse($data['dari_tanggal'])->format('d/m/Y') : '-';
+                        $to = $data['sampai_tanggal'] ? \Carbon\Carbon::parse($data['sampai_tanggal'])->format('d/m/Y') : '-';
+                        return "Rentang: {$from} - {$to}";
+                    }),
             ])
             ->recordActions([
                 ViewAction::make(),
