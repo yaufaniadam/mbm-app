@@ -58,6 +58,7 @@ class VolunteerForm
                                             TextInput::make('password')
                                                 ->label('Password')
                                                 ->password()
+                                                ->revealable()
                                                 ->required()
                                                 ->minLength(6),
                                         ];
