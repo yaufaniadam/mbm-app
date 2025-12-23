@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class DailyAttendanceStats extends BaseWidget
 {
-    protected static ?string $pollingInterval = null;
+    protected ?string $pollingInterval = null;
 
     // Public property to accept the data passed from the Page
     public ?string $selectedDate = null;
