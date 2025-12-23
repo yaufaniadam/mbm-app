@@ -155,4 +155,9 @@ class Sppg extends Model
     {
         return $this->hasMany(Volunteer::class);
     }
+
+    public function volunteerAttendances()
+    {
+        return $this->hasMany(VolunteerAttendance::class);
+    }
 }

@@ -5,6 +5,7 @@ namespace App\Providers\Filament;
 use App\Filament\Pages\ManageFinance;
 use App\Filament\Resources\ProductionSchedules\ProductionScheduleResource;
 use App\Filament\Sppg\Pages\Dashboard;
+use App\Filament\Sppg\Pages\DailyAttendance;
 use App\Filament\Sppg\Pages\SppgProfile;
 use App\Http\Middleware\CanAccessSppgPanel;
 use App\Livewire\AssignedSppg;
@@ -45,6 +46,7 @@ class SppgPanelProvider extends PanelProvider
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
                 Dashboard::class,
+                DailyAttendance::class,
                 SppgProfile::class,
                 ManageFinance::class,
             ])
