@@ -125,6 +125,16 @@ class DailyAttendance extends Page implements HasTable
             return;
         }
 
+        // Security check: Ensure the volunteer belongs to the user's SPPG scope
+        if ($sppgId && $volunteer->sppg_id !== $sppgId) {
+             Notification::make()
+                ->danger()
+                ->title('Unauthorized Action')
+                ->body('You cannot update attendance for a volunteer outside your SPPG.')
+                ->send();
+            return;
+        }
+
         VolunteerDailyAttendance::updateOrCreate(
             [
                 'volunteer_id' => $volunteerId,

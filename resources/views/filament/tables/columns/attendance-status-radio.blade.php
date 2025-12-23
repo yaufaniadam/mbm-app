@@ -2,10 +2,10 @@
     @php
         $status = $record->dailyAttendances->firstWhere('attendance_date', $this->selected_date)?->status;
         $statuses = [
-            'Hadir' => ['icon' => '✓', 'color' => 'success', 'bg' => 'bg-green-500', 'hover' => 'hover:bg-green-600'],
-            'Izin' => ['icon' => '📝', 'color' => 'warning', 'bg' => 'bg-yellow-500', 'hover' => 'hover:bg-yellow-600'],
-            'Sakit' => ['icon' => '🏥', 'color' => 'danger', 'bg' => 'bg-orange-500', 'hover' => 'hover:bg-orange-600'],
-            'Alpha' => ['icon' => '✗', 'color' => 'danger', 'bg' => 'bg-red-500', 'hover' => 'hover:bg-red-600'],
+            'Hadir' => ['icon' => '✓', 'color' => 'success', 'bg' => 'bg-green-500', 'hover' => 'hover:bg-green-600', 'ring' => 'ring-green-600'],
+            'Izin' => ['icon' => '📝', 'color' => 'warning', 'bg' => 'bg-yellow-500', 'hover' => 'hover:bg-yellow-600', 'ring' => 'ring-yellow-600'],
+            'Sakit' => ['icon' => '🏥', 'color' => 'danger', 'bg' => 'bg-orange-500', 'hover' => 'hover:bg-orange-600', 'ring' => 'ring-orange-600'],
+            'Alpha' => ['icon' => '✗', 'color' => 'danger', 'bg' => 'bg-red-500', 'hover' => 'hover:bg-red-600', 'ring' => 'ring-red-600'],
         ];
     @endphp
 
@@ -16,10 +16,11 @@
                 wire:click="updateStatus({{ $record->id }}, '{{ $key }}')"
                 wire:loading.attr="disabled"
                 @if($status === $key) disabled @endif
-                class="flex items-center gap-2 px-3 py-1.5 rounded-md transition-all text-sm font-medium
+                class="flex items-center gap-2 px-3 py-1.5 rounded-md transition-all text-sm font-medium shadow-sm text-white
+                    {{ $config['bg'] }} {{ $config['hover'] }}
                     {{ $status === $key
-                        ? $config['bg'] . ' text-white shadow-sm cursor-default opacity-100'
-                        : 'bg-white text-gray-700 hover:bg-gray-100 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600'
+                        ? 'opacity-50 cursor-not-allowed ring-2 ring-offset-2 ring-offset-gray-50 dark:ring-offset-gray-800 ' . $config['ring']
+                        : 'hover:scale-105 active:scale-95'
                     }}"
             >
                 <span>{{ $config['icon'] }}</span>
