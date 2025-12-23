@@ -56,7 +56,7 @@ class DailyAttendance extends Page implements HasTable
         ];
     }
 
-    protected function getHeaderWidgetsColumns(): int|array
+    public function getHeaderWidgetsColumns(): int|array
     {
         return 4;
     }
