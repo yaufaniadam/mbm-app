@@ -138,7 +138,33 @@ class SppgProfile extends Page implements HasForms
                     ->live()
                     ->searchable()
                     ->dehydrateStateUsing(fn($state) => $state === null ? null : (string) $state)
-                    ->disabled(fn($get) => ! $get('province_code')),
+                    ->disabled(fn($get) => ! $get('province_code'))
+                    ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                        $set('district_code', null);
+                        $set('village_code', null);
+                        
+                        // Geocode City
+                        if ($state) {
+                            $city = DB::table('indonesia_cities')->where('code', $state)->value('name');
+                            $province = DB::table('indonesia_provinces')->where('code', $get('province_code'))->value('name');
+                            if ($city && $province) {
+                                try {
+                                    $response = \Illuminate\Support\Facades\Http::withUserAgent('MBM-System/1.0')
+                                        ->timeout(5)
+                                        ->get('https://nominatim.openstreetmap.org/search', [
+                                            'q' => "$city, $province, Indonesia",
+                                            'format' => 'json',
+                                            'limit' => 1
+                                        ]);
+                                    if ($data = $response->json()[0] ?? null) {
+                                        $set('location', ['lat' => $data['lat'], 'lng' => $data['lon'], 'zoom' => 12]);
+                                        $set('latitude', $data['lat']);
+                                        $set('longitude', $data['lon']);
+                                    }
+                                } catch (\Exception $e) {}
+                            }
+                        }
+                    }),
                 Select::make('district_code')
                     ->label('Kecamatan')
                     ->options(function (callable $get) {
@@ -158,7 +184,33 @@ class SppgProfile extends Page implements HasForms
                     ->live()
                     ->searchable()
                     ->dehydrateStateUsing(fn($state) => $state === null ? null : (string) $state)
-                    ->disabled(fn($get) => ! $get('city_code')),
+                    ->disabled(fn($get) => ! $get('city_code'))
+                    ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                        $set('village_code', null);
+                        
+                        // Geocode District
+                        if ($state) {
+                            $district = DB::table('indonesia_districts')->where('code', $state)->value('name');
+                            $city = DB::table('indonesia_cities')->where('code', $get('city_code'))->value('name');
+                            $province = DB::table('indonesia_provinces')->where('code', $get('province_code'))->value('name');
+                            if ($district && $city && $province) {
+                                try {
+                                    $response = \Illuminate\Support\Facades\Http::withUserAgent('MBM-System/1.0')
+                                        ->timeout(5)
+                                        ->get('https://nominatim.openstreetmap.org/search', [
+                                            'q' => "$district, $city, $province, Indonesia",
+                                            'format' => 'json',
+                                            'limit' => 1
+                                        ]);
+                                    if ($data = $response->json()[0] ?? null) {
+                                        $set('location', ['lat' => $data['lat'], 'lng' => $data['lon'], 'zoom' => 14]);
+                                        $set('latitude', $data['lat']);
+                                        $set('longitude', $data['lon']);
+                                    }
+                                } catch (\Exception $e) {}
+                            }
+                        }
+                    }),
                 Select::make('village_code')
                     ->label('Kelurahan/Desa')
                     ->options(function (callable $get) {
@@ -178,17 +230,81 @@ class SppgProfile extends Page implements HasForms
                     ->live()
                     ->searchable()
                     ->dehydrateStateUsing(fn($state) => $state === null ? null : (string) $state)
-                    ->disabled(fn($get) => ! $get('district_code')),
+                    ->disabled(fn($get) => ! $get('district_code'))
+                    ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                        // Geocode Village
+                        if ($state) {
+                            $village = DB::table('indonesia_villages')->where('code', $state)->value('name');
+                            $district = DB::table('indonesia_districts')->where('code', $get('district_code'))->value('name');
+                            $city = DB::table('indonesia_cities')->where('code', $get('city_code'))->value('name');
+                            $province = DB::table('indonesia_provinces')->where('code', $get('province_code'))->value('name');
+                            if ($village && $district && $city && $province) {
+                                try {
+                                    $response = \Illuminate\Support\Facades\Http::withUserAgent('MBM-System/1.0')
+                                        ->timeout(5)
+                                        ->get('https://nominatim.openstreetmap.org/search', [
+                                            'q' => "$village, $district, $city, $province, Indonesia",
+                                            'format' => 'json',
+                                            'limit' => 1
+                                        ]);
+                                    if ($data = $response->json()[0] ?? null) {
+                                        $set('location', ['lat' => $data['lat'], 'lng' => $data['lon'], 'zoom' => 16]);
+                                        $set('latitude', $data['lat']);
+                                        $set('longitude', $data['lon']);
+                                    }
+                                } catch (\Exception $e) {}
+                            }
+                        }
+                    }),
             ]),
             Fieldset::make('Koordinat')
                 ->schema([
+                    \App\Forms\Components\LocationPicker::make('location')
+                        ->label('Lokasi di Peta (Drag Marker)')
+                        ->columnSpanFull()
+                        ->defaultLocation(-7.797068, 110.370529)
+                        ->zoom(13)
+                        ->height('300px')
+                        ->latitudeField('latitude')
+                        ->longitudeField('longitude'),
                     TextInput::make('latitude')
                         ->label('Latitude')
-                        ->required(),
+                        ->disabled(),
                     TextInput::make('longitude')
                         ->label('Longitude')
-                        ->required(),
+                        ->disabled(),
                 ]),
+            Fieldset::make('Dokumen SPPG')
+                ->schema([
+                    \Filament\Forms\Components\FileUpload::make('izin_operasional_path')
+                        ->label('Izin Operasional')
+                        ->directory('sppg-docs')
+                        ->acceptedFileTypes(['application/pdf', 'image/*']),
+                    \Filament\Forms\Components\FileUpload::make('sertifikat_halal_path')
+                        ->label('Sertifikat Halal')
+                        ->directory('sppg-docs')
+                        ->acceptedFileTypes(['application/pdf', 'image/*']),
+                    \Filament\Forms\Components\FileUpload::make('slhs_path')
+                        ->label('SLHS')
+                        ->directory('sppg-docs')
+                        ->acceptedFileTypes(['application/pdf', 'image/*']),
+                    \Filament\Forms\Components\FileUpload::make('lhaccp_path')
+                        ->label('LHACCP')
+                        ->directory('sppg-docs')
+                        ->acceptedFileTypes(['application/pdf', 'image/*']),
+                    \Filament\Forms\Components\FileUpload::make('iso_path')
+                        ->label('ISO')
+                        ->directory('sppg-docs')
+                        ->acceptedFileTypes(['application/pdf', 'image/*']),
+                    \Filament\Forms\Components\FileUpload::make('sertifikat_lahan_path')
+                        ->label('Sertifikat Lahan')
+                        ->directory('sppg-docs')
+                        ->acceptedFileTypes(['application/pdf', 'image/*']),
+                    \Filament\Forms\Components\FileUpload::make('dokumen_lain_path')
+                        ->label('Dokumen Lain-lain')
+                        ->directory('sppg-docs')
+                        ->acceptedFileTypes(['application/pdf', 'image/*']),
+                ])->columns(2),
         ];
     }
 
