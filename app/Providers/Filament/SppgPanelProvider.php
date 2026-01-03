@@ -41,6 +41,8 @@ class SppgPanelProvider extends PanelProvider
             // ->discoverResources(in: app_path('Filament/Resources/Sppgs'), for: 'App\Filament\Resources\Sppgs')
             ->resources([
                 ProductionScheduleResource::class,
+                \App\Filament\Resources\SppgFinancialReportResource::class,
+                \App\Filament\Resources\PostResource::class,
             ])
             ->discoverResources(in: app_path('Filament/Sppg/Resources'), for: 'App\Filament\Sppg\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
@@ -78,6 +80,18 @@ class SppgPanelProvider extends PanelProvider
                 Authenticate::class,
                 CanAccessSppgPanel::class,
             ])
-            ->spa(hasPrefetching: true);
+            ->spa(hasPrefetching: true)
+            ->renderHook(
+                'panels::head.start',
+                fn(): string => '<meta http-equiv="Content-Security-Policy" content="script-src \'self\' \'unsafe-inline\' \'unsafe-eval\' https://unpkg.com https://tile.openstreetmap.org; style-src \'self\' \'unsafe-inline\' https://unpkg.com;">'
+            )
+            ->renderHook(
+                'panels::head.end',
+                fn(): string => '<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />'
+            )
+            ->renderHook(
+                'panels::body.end',
+                fn(): string => '<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>'
+            );
     }
 }

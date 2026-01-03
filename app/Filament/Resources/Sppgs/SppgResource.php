@@ -73,13 +73,13 @@ class SppgResource extends Resource
                                 Section::make('Data Dasar')
                                     ->columns(3)
                                     ->schema([
-                                        TextEntry::make('nama_sppg')->label('Nama SPPG'),
-                                        TextEntry::make('kode_sppg')->label('ID SPPG'),
-                                        TextEntry::make('kepalaSppg.name')->label('Kepala SPPG'),
-                                        TextEntry::make('nama_bank')->label('Bank'),
-                                        TextEntry::make('nomor_va')->label('Nomor VA'),
-                                        TextEntry::make('tanggal_operasional_pertama')->label('Operasional Pertama')->date(),
-                                        TextEntry::make('alamat')->columnSpanFull(),
+                                        TextEntry::make('nama_sppg')->label('Nama SPPG')->color('gray'),
+                                        TextEntry::make('kode_sppg')->label('ID SPPG')->color('gray'),
+                                        TextEntry::make('kepalaSppg.name')->label('Kepala SPPG')->color('gray'),
+                                        TextEntry::make('nama_bank')->label('Bank')->color('gray'),
+                                        TextEntry::make('nomor_va')->label('Nomor VA')->color('gray'),
+                                        TextEntry::make('tanggal_operasional_pertama')->label('Operasional Pertama')->date()->color('gray'),
+                                        TextEntry::make('alamat')->columnSpanFull()->color('gray'),
 
                                         TextEntry::make('ba_verval_path')
                                             ->label('BA Verval')
@@ -113,6 +113,64 @@ class SppgResource extends Resource
                                                 TextEntry::make('lembagaPengusul.pimpinan.email')->label('Email Pimpinan'),
                                                 TextEntry::make('lembagaPengusul.alamat_lembaga')->label('Alamat Lembaga'),
                                             ]),
+                                    ]),
+                            ]),
+
+                        Tab::make('Dokumen')
+                            ->icon('heroicon-m-document-text')
+                            ->schema([
+                                Section::make('Dokumen SPPG')
+                                    ->columns(2)
+                                    ->schema([
+                                        TextEntry::make('izin_operasional_path')
+                                            ->label('Izin Operasional')
+                                            ->formatStateUsing(fn ($state) => $state ? 'Download' : 'Belum ada')
+                                            ->icon(fn ($state) => $state ? 'heroicon-m-arrow-down-tray' : null)
+                                            ->color(fn ($state) => $state ? 'primary' : 'gray')
+                                            ->url(fn ($state) => $state ? \Illuminate\Support\Facades\Storage::disk('public')->url($state) : null)
+                                            ->openUrlInNewTab(),
+                                        TextEntry::make('sertifikat_halal_path')
+                                            ->label('Sertifikat Halal')
+                                            ->formatStateUsing(fn ($state) => $state ? 'Download' : 'Belum ada')
+                                            ->icon(fn ($state) => $state ? 'heroicon-m-arrow-down-tray' : null)
+                                            ->color(fn ($state) => $state ? 'primary' : 'gray')
+                                            ->url(fn ($state) => $state ? \Illuminate\Support\Facades\Storage::disk('public')->url($state) : null)
+                                            ->openUrlInNewTab(),
+                                        TextEntry::make('slhs_path')
+                                            ->label('SLHS')
+                                            ->formatStateUsing(fn ($state) => $state ? 'Download' : 'Belum ada')
+                                            ->icon(fn ($state) => $state ? 'heroicon-m-arrow-down-tray' : null)
+                                            ->color(fn ($state) => $state ? 'primary' : 'gray')
+                                            ->url(fn ($state) => $state ? \Illuminate\Support\Facades\Storage::disk('public')->url($state) : null)
+                                            ->openUrlInNewTab(),
+                                        TextEntry::make('lhaccp_path')
+                                            ->label('LHACCP')
+                                            ->formatStateUsing(fn ($state) => $state ? 'Download' : 'Belum ada')
+                                            ->icon(fn ($state) => $state ? 'heroicon-m-arrow-down-tray' : null)
+                                            ->color(fn ($state) => $state ? 'primary' : 'gray')
+                                            ->url(fn ($state) => $state ? \Illuminate\Support\Facades\Storage::disk('public')->url($state) : null)
+                                            ->openUrlInNewTab(),
+                                        TextEntry::make('iso_path')
+                                            ->label('ISO')
+                                            ->formatStateUsing(fn ($state) => $state ? 'Download' : 'Belum ada')
+                                            ->icon(fn ($state) => $state ? 'heroicon-m-arrow-down-tray' : null)
+                                            ->color(fn ($state) => $state ? 'primary' : 'gray')
+                                            ->url(fn ($state) => $state ? \Illuminate\Support\Facades\Storage::disk('public')->url($state) : null)
+                                            ->openUrlInNewTab(),
+                                        TextEntry::make('sertifikat_lahan_path')
+                                            ->label('Sertifikat Lahan')
+                                            ->formatStateUsing(fn ($state) => $state ? 'Download' : 'Belum ada')
+                                            ->icon(fn ($state) => $state ? 'heroicon-m-arrow-down-tray' : null)
+                                            ->color(fn ($state) => $state ? 'primary' : 'gray')
+                                            ->url(fn ($state) => $state ? \Illuminate\Support\Facades\Storage::disk('public')->url($state) : null)
+                                            ->openUrlInNewTab(),
+                                        TextEntry::make('dokumen_lain_path')
+                                            ->label('Dokumen Lain-lain')
+                                            ->formatStateUsing(fn ($state) => $state ? 'Download' : 'Belum ada')
+                                            ->icon(fn ($state) => $state ? 'heroicon-m-arrow-down-tray' : null)
+                                            ->color(fn ($state) => $state ? 'primary' : 'gray')
+                                            ->url(fn ($state) => $state ? \Illuminate\Support\Facades\Storage::disk('public')->url($state) : null)
+                                            ->openUrlInNewTab(),
                                     ]),
                             ]),
                     ]),
